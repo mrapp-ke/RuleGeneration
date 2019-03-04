@@ -1,5 +1,7 @@
 package de.tud.ke.rulelearning.heuristics;
 
+import de.mrapp.util.Condition;
+
 public class FMeasure extends Heuristic {
 
     private final double beta;
@@ -9,6 +11,7 @@ public class FMeasure extends Heuristic {
     }
 
     public FMeasure(final double beta) {
+        Condition.INSTANCE.ensureAtLeast(beta, 0, "The value of the beta-parameter must be at least 0");
         this.beta = beta;
     }
 
@@ -18,15 +21,19 @@ public class FMeasure extends Heuristic {
 
     @Override
     public double evaluateConfusionMatrix(final ConfusionMatrix confusionMatrix) {
-        double r = new Recall().evaluateConfusionMatrix(confusionMatrix);
-
-        if (beta == Double.POSITIVE_INFINITY) {
-            return r;
+        if (beta == 0) {
+            return new Precision().evaluateConfusionMatrix(confusionMatrix);
         } else {
-            double p = new Precision().evaluateConfusionMatrix(confusionMatrix);
-            double numerator = (Math.pow(beta, 2) + 1) * r * p;
-            double denominator = Math.pow(beta, 2) * p + r;
-            return denominator > 0 ? numerator / denominator : 0;
+            double r = new Recall().evaluateConfusionMatrix(confusionMatrix);
+
+            if (beta == Double.POSITIVE_INFINITY) {
+                return r;
+            } else {
+                double p = new Precision().evaluateConfusionMatrix(confusionMatrix);
+                double numerator = (Math.pow(beta, 2) + 1) * r * p;
+                double denominator = Math.pow(beta, 2) * p + r;
+                return denominator > 0 ? numerator / denominator : 0;
+            }
         }
     }
 
