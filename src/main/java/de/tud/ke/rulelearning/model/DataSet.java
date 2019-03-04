@@ -158,8 +158,8 @@ public class DataSet implements Iterable<Instance>, Serializable {
     }
 
     public boolean getTargetPrediction(final int labelIndex) {
-        int occurrences = getInstancesByNominalAttribute(labelIndex, "1", AttributeType.LABEL).size();
-        return occurrences < (getDataSet().getNumInstances() / 2);
+        Instances instances = getInstancesByNominalAttribute(labelIndex, "1", AttributeType.LABEL);
+        return instances == null || (instances.size() < (getDataSet().getNumInstances() / 2));
     }
 
     @NotNull
