@@ -25,6 +25,7 @@ public class RuleSetPredictor implements Predictor<RuleSet> {
 
                     if (nominalCondition.getValue().equals(targetPrediction ? "1" : "0")) {
                         bipartition[i] = targetPrediction;
+                        break;
                     }
                 }
             }
