@@ -48,6 +48,10 @@ public class NumericCondition extends Condition {
         this.comparator = comparator;
     }
 
+    public Comparator getComparator() {
+        return comparator;
+    }
+
     public double getValue() {
         return value;
     }

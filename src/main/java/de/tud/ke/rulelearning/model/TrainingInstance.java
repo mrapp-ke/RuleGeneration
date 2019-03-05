@@ -19,6 +19,10 @@ public class TrainingInstance implements Instance, Serializable {
         this.instance = instance;
     }
 
+    public int getIndex() {
+        return index;
+    }
+
     @Override
     public Attribute attribute(int i) {
         return this.instance.attribute(i);

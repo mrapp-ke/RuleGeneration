@@ -16,7 +16,6 @@ public final class RuleGenerationConfigurationBuilderFactory {
 
     public static RuleGenerationConfiguration.Builder create(final BaseConfiguration baseConfiguration,
                                                              final String[] args) {
-        double minPerformance = ConfigUtil.getDoubleArgument("min-performance", args, 0d);
         int maxRules = ConfigUtil.getIntArgument("min-rules", args, 300000);
         String coveringType = ConfigUtil.getOptionalArgument("covering", args);
         Covering.Type covering = coveringType != null ? Covering.Type.fromValue(coveringType) : null;
@@ -30,7 +29,6 @@ public final class RuleGenerationConfigurationBuilderFactory {
         StoppingCriterion.Type stoppingCriterion = stoppingCriterionType != null ?
                 StoppingCriterion.Type.fromValue(stoppingCriterionType) : null;
         return new RuleGenerationConfiguration.Builder(baseConfiguration)
-                .setMinPerformance(minPerformance)
                 .setMinRules(maxRules)
                 .setCovering(covering)
                 .setCoveringEvaluation(coveringEvaluation)

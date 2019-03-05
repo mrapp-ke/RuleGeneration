@@ -3,6 +3,7 @@ package de.tud.ke.rulelearning.learner;
 import de.tud.ke.rulelearning.experiments.RuleGenerationConfiguration;
 import de.tud.ke.rulelearning.learner.covering.Covering;
 import de.tud.ke.rulelearning.learner.covering.CoveringFactory;
+import de.tud.ke.rulelearning.learner.evaluation.Evaluator;
 import de.tud.ke.rulelearning.learner.prediction.Predictor;
 import de.tud.ke.rulelearning.learner.prediction.RuleSetPredictor;
 import de.tud.ke.rulelearning.model.DataSet;
@@ -22,17 +23,9 @@ public abstract class AbstractRuleGenerationLearner extends AbstractMultiLabelRu
 
     @Override
     protected RuleSet postProcessModel(final DataSet trainingDataSet, final RuleSet model) {
-        RuleSet postProcessedRuleSet = model;
-
-        if (getConfiguration().getMinPerformance() > 0) {
-            final RuleSet filteredRuleSet = new RuleSet();
-            postProcessedRuleSet.stream()
-                    .filter(rule -> rule.getHeuristicValue() >= getConfiguration().getMinPerformance())
-                    .forEach(filteredRuleSet::add);
-            postProcessedRuleSet = filteredRuleSet;
-        }
-
-        return postProcessedRuleSet;
+        Evaluator evaluator = new Evaluator();
+        evaluator.evaluate(trainingDataSet, model);
+        return model;
     }
 
     @Override

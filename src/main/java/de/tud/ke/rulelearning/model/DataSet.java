@@ -1,6 +1,7 @@
 package de.tud.ke.rulelearning.model;
 
 import de.tud.ke.rulelearning.util.IteratorUtil;
+import de.tud.ke.rulelearning.util.MappedList;
 import mulan.data.MultiLabelInstances;
 import mulan.evaluation.GroundTruth;
 import org.jetbrains.annotations.NotNull;
@@ -11,6 +12,7 @@ import weka.core.Instances;
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class DataSet implements Iterable<Instance>, Serializable {
 
@@ -18,33 +20,32 @@ public class DataSet implements Iterable<Instance>, Serializable {
 
     private final Map<Integer, Instances> instancesSortedByNumericAttributes;
 
-    private final Map<Integer, Map<String, Instances>> instancesIndexedByNominalAttributes;
+    private final Map<Integer, Map<String, Map<Integer, TrainingInstance>>> instancesIndexedByNominalAttributes;
 
     private final Set<Integer> labelIndices;
 
-    private Map<Integer, Map<String, Instances>> createInstancesIndexedByNominalAttributes(
+    private Map<Integer, Map<String, Map<Integer, TrainingInstance>>> createInstancesIndexedByNominalAttributes(
             final Collection<Attribute> featureAttributes,
             final Collection<Attribute> labelAttributes) {
-        Map<Integer, Map<String, Instances>> result = new HashMap<>(
+        Map<Integer, Map<String, Map<Integer, TrainingInstance>>> result = new HashMap<>(
                 featureAttributes.size() + labelAttributes.size(), 1f);
 
         for (Attribute attribute : IteratorUtil.concatIterables(featureAttributes, labelAttributes)) {
             if (attribute.isNominal()) {
                 for (String value : IteratorUtil
                         .createForLoopIterable(attribute, Attribute::numValues, Attribute::value)) {
-                    Instances filteredInstances = new Instances(dataSet.getDataSet());
                     int index = attribute.index();
+                    Map<Integer, TrainingInstance> filteredInstances = new HashMap<>();
 
-                    for (int i = filteredInstances.size() - 1; i >= 0; i--) {
-                        Instance instance = filteredInstances.get(i);
-
-                        if (instance.isMissing(index) | !value.equals(instance.stringValue(index))) {
-                            filteredInstances.remove(i);
+                    for (Instance instance : this) {
+                        if (instance.isMissing(index) || !value.equals(instance.stringValue(index))) {
+                            TrainingInstance trainingInstance = (TrainingInstance) instance;
+                            filteredInstances.put(trainingInstance.getIndex(), trainingInstance);
                         }
                     }
 
                     if (!filteredInstances.isEmpty()) {
-                        Map<String, Instances> map = result.computeIfAbsent(index,
+                        Map<String, Map<Integer, TrainingInstance>> map = result.computeIfAbsent(index,
                                 x -> new HashMap<>(attribute.numValues(), 1f));
                         map.put(value, filteredInstances);
                     }
@@ -65,6 +66,65 @@ public class DataSet implements Iterable<Instance>, Serializable {
                     result.put(index, sortedInstances);
                 });
         return result;
+    }
+
+    private Map<Integer, TrainingInstance> getInstancesByNominalAttribute(
+            final Attribute attribute, final String value, final AttributeType attributeType,
+            final Map<Integer, TrainingInstance> instances) {
+        Map<Integer, TrainingInstance> allInstances = getInstancesByNominalAttribute(attribute, value, attributeType);
+        return intersect(allInstances, instances);
+    }
+
+    private Map<Integer, TrainingInstance> getInstancesByNumericAttribute(
+            final Attribute attribute, final NumericCondition.Comparator comparator, final double value,
+            final Map<Integer, TrainingInstance> instances) {
+        Map<Integer, TrainingInstance> allInstances = getInstancesByNumericAttribute(attribute, comparator, value);
+        return intersect(allInstances, instances);
+    }
+
+    private Map<Integer, TrainingInstance> intersect(final Map<Integer, TrainingInstance> instances1,
+                                                     final Map<Integer, TrainingInstance> instances2) {
+        if (instances2 != null) {
+            return instances2.entrySet().stream().filter(entry -> instances1.containsKey(entry.getKey())).collect(
+                    HashMap::new, (map, entry) -> map.put(entry.getKey(), entry.getValue()), HashMap::putAll);
+        }
+
+        return instances1;
+    }
+
+    private Map<Integer, TrainingInstance> getInstancesByNumericAttribute(final Attribute attribute,
+                                                                          final NumericCondition.Comparator comparator,
+                                                                          final double value) {
+        Instances sortedInstances = getInstancesSortedByNumericAttribute(attribute);
+        List<Double> mappedInstances = new MappedList<>(sortedInstances, instance -> instance.value(attribute));
+        int index = Math.abs(Collections.binarySearch(mappedInstances, value, Double::compare));
+        int absIndex = Math.abs(index);
+        IntStream intStream;
+
+        switch (comparator) {
+            case LESS:
+                intStream = IntStream.range(0, absIndex);
+                break;
+            case LESS_OR_EQUAL:
+                intStream = index >= 0 ? IntStream.rangeClosed(0, index) : IntStream.range(0, absIndex);
+                break;
+            case EQUAL:
+                intStream = index >= 0 ? IntStream.rangeClosed(index, index) : IntStream.range(absIndex, absIndex);
+                break;
+            case GREATER:
+                intStream = index >= 0 ? IntStream.range(index + 1, mappedInstances.size()) :
+                        IntStream.range(absIndex, mappedInstances.size());
+                break;
+            case GREATER_OR_EQUAL:
+                intStream = index >= 0 ? IntStream.range(index, mappedInstances.size()) :
+                        IntStream.range(absIndex, mappedInstances.size());
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown comparator: " + comparator);
+        }
+
+        return intStream.mapToObj(i -> (TrainingInstance) sortedInstances.get(i))
+                .collect(HashMap::new, (map, instance) -> map.put(instance.getIndex(), instance), HashMap::putAll);
     }
 
     public DataSet(final MultiLabelInstances dataSet) {
@@ -109,8 +169,8 @@ public class DataSet implements Iterable<Instance>, Serializable {
         return instance.stringValue(labelIndex).equals("1");
     }
 
-    public Instances getInstancesByNominalAttribute(final Attribute attribute, final String value,
-                                                    final AttributeType attributeType) {
+    public Map<Integer, TrainingInstance> getInstancesByNominalAttribute(final Attribute attribute, final String value,
+                                                                         final AttributeType attributeType) {
         if (!attribute.isNominal()) {
             throw new IllegalArgumentException("Attribute must be nominal");
         }
@@ -118,12 +178,12 @@ public class DataSet implements Iterable<Instance>, Serializable {
         return getInstancesByNominalAttribute(attribute.index(), value, attributeType);
     }
 
-    public Instances getInstancesByNominalAttribute(final int index, final String value,
-                                                    final AttributeType attributeType) {
+    public Map<Integer, TrainingInstance> getInstancesByNominalAttribute(final int index, final String value,
+                                                                         final AttributeType attributeType) {
         if (attributeType == AttributeType.ALL ||
                 (attributeType == AttributeType.FEATURE && !isLabel(index)) ||
                 (attributeType == AttributeType.LABEL && isLabel(index))) {
-            Map<String, Instances> map = instancesIndexedByNominalAttributes.get(index);
+            Map<String, Map<Integer, TrainingInstance>> map = instancesIndexedByNominalAttributes.get(index);
             return map != null ? map.get(value) : null;
         }
 
@@ -141,7 +201,7 @@ public class DataSet implements Iterable<Instance>, Serializable {
 
     public boolean hasInstancesWithNominalAttribute(final int index, final String value,
                                                     final AttributeType attributeType) {
-        Instances instances = getInstancesByNominalAttribute(index, value, attributeType);
+        Map<Integer, TrainingInstance> instances = getInstancesByNominalAttribute(index, value, attributeType);
         return instances != null && !instances.isEmpty();
     }
 
@@ -158,8 +218,32 @@ public class DataSet implements Iterable<Instance>, Serializable {
     }
 
     public boolean getTargetPrediction(final int labelIndex) {
-        Instances instances = getInstancesByNominalAttribute(labelIndex, "1", AttributeType.LABEL);
-        return instances == null || (instances.size() < (getDataSet().getNumInstances() / 2));
+        int positives = getPositiveExamples(labelIndex);
+        int negatives = dataSet.getNumInstances() - positives;
+        return negatives >= positives;
+    }
+
+    public int getPositiveExamples(final int labelIndex) {
+        Map<Integer, TrainingInstance> instances = getInstancesByNominalAttribute(labelIndex, "1", AttributeType.LABEL);
+        return instances != null ? instances.size() : 0;
+    }
+
+    public Map<Integer, TrainingInstance> getCoveredInstances(final Rule rule) {
+        Map<Integer, TrainingInstance> instances = null;
+
+        for (Condition condition : rule.getBody()) {
+            if (condition instanceof NominalCondition) {
+                NominalCondition nominalCondition = (NominalCondition) condition;
+                instances = getInstancesByNominalAttribute(nominalCondition.getAttribute(),
+                        nominalCondition.getValue(), AttributeType.FEATURE, instances);
+            } else {
+                NumericCondition numericCondition = (NumericCondition) condition;
+                instances = getInstancesByNumericAttribute(numericCondition.getAttribute(),
+                        numericCondition.getComparator(), numericCondition.getValue(), instances);
+            }
+        }
+
+        return instances != null ? instances : Collections.emptyMap();
     }
 
     @NotNull

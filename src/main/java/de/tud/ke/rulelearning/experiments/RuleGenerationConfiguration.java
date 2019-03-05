@@ -16,8 +16,6 @@ public class RuleGenerationConfiguration extends BaseConfigurationProxy {
 
         private final BaseConfiguration baseConfiguration;
 
-        private double minPerformance = 0.0;
-
         private int minRules = 300000;
 
         private Covering.Type covering = null;
@@ -31,15 +29,6 @@ public class RuleGenerationConfiguration extends BaseConfigurationProxy {
         public Builder(final BaseConfiguration baseConfiguration) {
             super(baseConfiguration);
             this.baseConfiguration = baseConfiguration;
-        }
-
-        public Builder setMinPerformance(final double minPerformance) {
-            this.minPerformance = minPerformance;
-            return this;
-        }
-
-        public double getMinPerformance() {
-            return minPerformance;
         }
 
         public Builder setMinRules(final int minRules) {
@@ -79,13 +68,11 @@ public class RuleGenerationConfiguration extends BaseConfigurationProxy {
         }
 
         public RuleGenerationConfiguration build() {
-            return new RuleGenerationConfiguration(baseConfiguration, minPerformance, minRules, covering,
-                    coveringEvaluation, stoppingCriterion);
+            return new RuleGenerationConfiguration(baseConfiguration, minRules, covering, coveringEvaluation,
+                    stoppingCriterion);
         }
 
     }
-
-    private final double minPerformance;
 
     private final int minRules;
 
@@ -95,20 +82,14 @@ public class RuleGenerationConfiguration extends BaseConfigurationProxy {
 
     private final StoppingCriterion.Type stoppingCriterion;
 
-    private RuleGenerationConfiguration(final BaseConfiguration baseConfiguration, final double minPerformance,
-                                        final int minRules, final Covering.Type covering,
-                                        final MultiLabelEvaluation coveringEvaluation,
+    private RuleGenerationConfiguration(final BaseConfiguration baseConfiguration, final int minRules,
+                                        final Covering.Type covering, final MultiLabelEvaluation coveringEvaluation,
                                         final StoppingCriterion.Type stoppingCriterion) {
         super(baseConfiguration);
-        this.minPerformance = minPerformance;
         this.minRules = minRules;
         this.covering = covering;
         this.coveringEvaluation = coveringEvaluation;
         this.stoppingCriterion = stoppingCriterion;
-    }
-
-    public double getMinPerformance() {
-        return minPerformance;
     }
 
     public int getMinRules() {
@@ -130,7 +111,6 @@ public class RuleGenerationConfiguration extends BaseConfigurationProxy {
     @Override
     public String toString() {
         return getBaseConfiguration().toString() +
-                "-min-performance " + minPerformance + "\n" +
                 "-min-rules " + minRules + "\n" +
                 "-covering " + (covering != null ? covering.getValue() : null) + "\n" +
                 "-covering-heuristic " + getCoveringEvaluation().getEvaluationStrategy() + "_" +
@@ -140,7 +120,7 @@ public class RuleGenerationConfiguration extends BaseConfigurationProxy {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), minPerformance, minRules, covering, coveringEvaluation,
+        return Objects.hash(super.hashCode(), minRules, covering, coveringEvaluation,
                 stoppingCriterion);
     }
 
@@ -150,8 +130,7 @@ public class RuleGenerationConfiguration extends BaseConfigurationProxy {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         RuleGenerationConfiguration that = (RuleGenerationConfiguration) o;
-        return Double.compare(that.minPerformance, minPerformance) == 0 &&
-                that.minRules == minRules &&
+        return that.minRules == minRules &&
                 covering == that.covering &&
                 Objects.equals(that.getCoveringEvaluation(), getCoveringEvaluation()) &&
                 stoppingCriterion == that.stoppingCriterion;

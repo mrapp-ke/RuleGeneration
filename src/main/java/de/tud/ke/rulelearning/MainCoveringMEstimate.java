@@ -51,7 +51,6 @@ public class MainCoveringMEstimate {
                 (baseConfiguration, args1) -> baseConfiguration, args);
         RuleGenerationConfiguration.Builder configurationBuilder =
                 RuleGenerationConfigurationBuilderFactory.create(batchExperiment.getConfiguration(), args);
-        String approachName = "minPerformance=" + configurationBuilder.getMinPerformance();
 
         final BiFunction<String, RuleGenerationConfiguration, AbstractRuleGenerationLearner> learnerFactory =
                 RandomForestRuleGenerationLearner::new;
@@ -61,7 +60,7 @@ public class MainCoveringMEstimate {
                     new PartialPredictionStrategy(), new MicroAveraging(new DefaultAggregation()));
             configurationBuilder.setCoveringEvaluation(coveringEvaluation);
             batchExperiment.addExperiment(sharedData -> new RuleGenerationExperiment(sharedData,
-                    configurationBuilder.build(), learnerFactory, approachName));
+                    configurationBuilder.build(), learnerFactory, ""));
         }
 
         batchExperiment.run();
