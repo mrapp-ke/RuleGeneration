@@ -16,16 +16,14 @@ public class RuleGenerationConfiguration extends BaseConfigurationProxy {
 
         private final BaseConfiguration baseConfiguration;
 
-        private MultiLabelEvaluation evaluation = new MultiLabelEvaluation(new FMeasure(),
-                new PartialPredictionStrategy(), new MicroAveraging(new DefaultAggregation()));
-
         private double minPerformance = 0.0;
 
         private int minRules = 300000;
 
         private Covering.Type covering = null;
 
-        private MultiLabelEvaluation coveringEvaluation = evaluation;
+        private MultiLabelEvaluation coveringEvaluation = new MultiLabelEvaluation(new FMeasure(),
+                new PartialPredictionStrategy(), new MicroAveraging(new DefaultAggregation()));
 
         private StoppingCriterion.Type stoppingCriterion = null;
 
@@ -33,15 +31,6 @@ public class RuleGenerationConfiguration extends BaseConfigurationProxy {
         public Builder(final BaseConfiguration baseConfiguration) {
             super(baseConfiguration);
             this.baseConfiguration = baseConfiguration;
-        }
-
-        public Builder setEvaluation(final MultiLabelEvaluation evaluation) {
-            this.evaluation = evaluation;
-            return this;
-        }
-
-        public MultiLabelEvaluation getEvaluation() {
-            return evaluation;
         }
 
         public Builder setMinPerformance(final double minPerformance) {
@@ -90,13 +79,11 @@ public class RuleGenerationConfiguration extends BaseConfigurationProxy {
         }
 
         public RuleGenerationConfiguration build() {
-            return new RuleGenerationConfiguration(baseConfiguration, evaluation, minPerformance, minRules, covering,
+            return new RuleGenerationConfiguration(baseConfiguration, minPerformance, minRules, covering,
                     coveringEvaluation, stoppingCriterion);
         }
 
     }
-
-    private final MultiLabelEvaluation evaluation;
 
     private final double minPerformance;
 
@@ -108,22 +95,16 @@ public class RuleGenerationConfiguration extends BaseConfigurationProxy {
 
     private final StoppingCriterion.Type stoppingCriterion;
 
-    private RuleGenerationConfiguration(final BaseConfiguration baseConfiguration,
-                                        final MultiLabelEvaluation evaluation, final double minPerformance,
+    private RuleGenerationConfiguration(final BaseConfiguration baseConfiguration, final double minPerformance,
                                         final int minRules, final Covering.Type covering,
                                         final MultiLabelEvaluation coveringEvaluation,
                                         final StoppingCriterion.Type stoppingCriterion) {
         super(baseConfiguration);
-        this.evaluation = evaluation;
         this.minPerformance = minPerformance;
         this.minRules = minRules;
         this.covering = covering;
         this.coveringEvaluation = coveringEvaluation;
         this.stoppingCriterion = stoppingCriterion;
-    }
-
-    public MultiLabelEvaluation getEvaluation() {
-        return evaluation;
     }
 
     public double getMinPerformance() {
@@ -139,7 +120,7 @@ public class RuleGenerationConfiguration extends BaseConfigurationProxy {
     }
 
     public MultiLabelEvaluation getCoveringEvaluation() {
-        return coveringEvaluation != null ? coveringEvaluation : getEvaluation();
+        return coveringEvaluation;
     }
 
     public StoppingCriterion.Type getStoppingCriterion() {
@@ -151,9 +132,6 @@ public class RuleGenerationConfiguration extends BaseConfigurationProxy {
         return getBaseConfiguration().toString() +
                 "-min-performance " + minPerformance + "\n" +
                 "-min-rules " + minRules + "\n" +
-                "-heuristic " + (evaluation != null ?
-                evaluation.getEvaluationStrategy() + "_" + evaluation.getHeuristic() + "_" +
-                        evaluation.getAveragingStrategy() : null) + "\n" +
                 "-covering " + (covering != null ? covering.getValue() : null) + "\n" +
                 "-covering-heuristic " + getCoveringEvaluation().getEvaluationStrategy() + "_" +
                 getCoveringEvaluation().getHeuristic() + "_" + getCoveringEvaluation().getAveragingStrategy() + "\n" +
@@ -162,7 +140,7 @@ public class RuleGenerationConfiguration extends BaseConfigurationProxy {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), evaluation, minPerformance, minRules, covering, coveringEvaluation,
+        return Objects.hash(super.hashCode(), minPerformance, minRules, covering, coveringEvaluation,
                 stoppingCriterion);
     }
 
@@ -174,7 +152,6 @@ public class RuleGenerationConfiguration extends BaseConfigurationProxy {
         RuleGenerationConfiguration that = (RuleGenerationConfiguration) o;
         return Double.compare(that.minPerformance, minPerformance) == 0 &&
                 that.minRules == minRules &&
-                Objects.equals(evaluation, that.evaluation) &&
                 covering == that.covering &&
                 Objects.equals(that.getCoveringEvaluation(), getCoveringEvaluation()) &&
                 stoppingCriterion == that.stoppingCriterion;

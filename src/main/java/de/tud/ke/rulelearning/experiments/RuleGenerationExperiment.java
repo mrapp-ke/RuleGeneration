@@ -17,7 +17,7 @@ public class RuleGenerationExperiment extends AbstractSingleRuleLearnerExperimen
         String arffFileName = getConfiguration().getArffFilePath().getFileName().toString();
         String dataSetName = arffFileName.toLowerCase().endsWith(".arff") ? arffFileName
                 .substring(0, arffFileName.length() - ".arff".length()) : arffFileName;
-        return dataSetName + "_" + getConfiguration().getEvaluation() + "_" + approachName;
+        return dataSetName + "_" + approachName;
     }
 
     public RuleGenerationExperiment(

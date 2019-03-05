@@ -1,51 +1,19 @@
 package de.tud.ke.rulelearning.learner;
 
 import de.tud.ke.rulelearning.experiments.RuleGenerationConfiguration;
-import de.tud.ke.rulelearning.heuristics.ConfusionMatrix;
-import de.tud.ke.rulelearning.heuristics.Heuristic;
 import de.tud.ke.rulelearning.learner.covering.Covering;
 import de.tud.ke.rulelearning.learner.covering.CoveringFactory;
-import de.tud.ke.rulelearning.learner.evaluation.MultiLabelEvaluation;
-import de.tud.ke.rulelearning.learner.evaluation.SingleLabelEvaluationStrategy;
 import de.tud.ke.rulelearning.learner.prediction.Predictor;
 import de.tud.ke.rulelearning.learner.prediction.RuleSetPredictor;
-import de.tud.ke.rulelearning.model.*;
+import de.tud.ke.rulelearning.model.DataSet;
+import de.tud.ke.rulelearning.model.MultiplePredictionStats;
+import de.tud.ke.rulelearning.model.PredictionStats;
+import de.tud.ke.rulelearning.model.RuleSet;
 import mulan.classifier.MultiLabelOutput;
 import mulan.evaluation.GroundTruth;
 import weka.core.Instance;
 
 public abstract class AbstractRuleGenerationLearner extends AbstractMultiLabelRuleLearner<RuleGenerationConfiguration> {
-
-    private void adjustHeuristicValuesOfRules(final DataSet dataSet, final RuleSet ruleSet) {
-        MultiLabelEvaluation evaluation = getConfiguration().getEvaluation();
-        evaluateRules(dataSet, evaluation, ruleSet);
-        adjustLabelWiseHeuristicValues(dataSet, ruleSet);
-    }
-
-    private void adjustLabelWiseHeuristicValues(final DataSet dataSet, final RuleSet ruleSet) {
-        for (int labelIndex : dataSet.getLabelIndices()) {
-            Heuristic heuristic = getConfiguration().getEvaluation().getHeuristic();
-            MultiLabelEvaluation singleLabelEvaluation = new MultiLabelEvaluation(heuristic,
-                    new SingleLabelEvaluationStrategy(labelIndex),
-                    getConfiguration().getEvaluation().getAveragingStrategy(),
-                    (rule, result) -> {
-                        Head head = rule.getHead();
-                        ConfusionMatrix confusionMatrix = result.getConfusionMatrix();
-                        head.setLabelWiseConfusionMatrix(labelIndex, confusionMatrix);
-                        head.setLabelWiseHeuristicValue(labelIndex, result.getHeuristicValue());
-                    });
-            evaluateRules(dataSet, singleLabelEvaluation, ruleSet);
-        }
-    }
-
-    private void evaluateRules(final DataSet dataSet,
-                               final MultiLabelEvaluation evaluation, final Iterable<Rule> rules) {
-        if (evaluation != null) {
-            for (Rule rule : rules) {
-                evaluation.evaluate(dataSet, rule);
-            }
-        }
-    }
 
     AbstractRuleGenerationLearner(final String name, final RuleGenerationConfiguration configuration,
                                   final MultiplePredictionStats predictionStats) {
@@ -55,7 +23,6 @@ public abstract class AbstractRuleGenerationLearner extends AbstractMultiLabelRu
     @Override
     protected RuleSet postProcessModel(final DataSet trainingDataSet, final RuleSet model) {
         RuleSet postProcessedRuleSet = model;
-        adjustHeuristicValuesOfRules(trainingDataSet, postProcessedRuleSet);
 
         if (getConfiguration().getMinPerformance() > 0) {
             final RuleSet filteredRuleSet = new RuleSet();

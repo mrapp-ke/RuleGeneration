@@ -18,22 +18,18 @@ public final class RuleGenerationConfigurationBuilderFactory {
                                                              final String[] args) {
         double minPerformance = ConfigUtil.getDoubleArgument("min-performance", args, 0d);
         int maxRules = ConfigUtil.getIntArgument("min-rules", args, 300000);
-        EvaluationStrategy evaluationStrategy = new PartialPredictionStrategy();
-        AveragingStrategy averagingStrategy = new MicroAveraging(new DefaultAggregation());
-        Heuristic heuristic = HeuristicFactory.create(ConfigUtil.getOptionalArgument("heuristic", args));
-        MultiLabelEvaluation evaluation = heuristic != null ? new MultiLabelEvaluation(heuristic, evaluationStrategy,
-                averagingStrategy) : new MultiLabelEvaluation(new FMeasure(), evaluationStrategy, averagingStrategy);
         String coveringType = ConfigUtil.getOptionalArgument("covering", args);
         Covering.Type covering = coveringType != null ? Covering.Type.fromValue(coveringType) : null;
         Heuristic coveringHeuristic = HeuristicFactory.create(ConfigUtil.getOptionalArgument("covering-heuristic", args));
+        EvaluationStrategy evaluationStrategy = new PartialPredictionStrategy();
+        AveragingStrategy averagingStrategy = new MicroAveraging(new DefaultAggregation());
         MultiLabelEvaluation coveringEvaluation = coveringHeuristic != null ?
-                new MultiLabelEvaluation(coveringHeuristic, evaluationStrategy,
-                        new MicroAveraging(new DefaultAggregation())) : evaluation;
+                new MultiLabelEvaluation(coveringHeuristic, evaluationStrategy, averagingStrategy) :
+                new MultiLabelEvaluation(new FMeasure(), evaluationStrategy, averagingStrategy);
         String stoppingCriterionType = ConfigUtil.getOptionalArgument("stopping-criterion", args);
         StoppingCriterion.Type stoppingCriterion = stoppingCriterionType != null ?
                 StoppingCriterion.Type.fromValue(stoppingCriterionType) : null;
         return new RuleGenerationConfiguration.Builder(baseConfiguration)
-                .setEvaluation(evaluation)
                 .setMinPerformance(minPerformance)
                 .setMinRules(maxRules)
                 .setCovering(covering)
