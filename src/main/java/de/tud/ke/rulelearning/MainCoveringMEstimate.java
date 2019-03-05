@@ -5,10 +5,6 @@ import de.tud.ke.rulelearning.heuristics.Heuristic;
 import de.tud.ke.rulelearning.heuristics.MEstimate;
 import de.tud.ke.rulelearning.learner.AbstractRuleGenerationLearner;
 import de.tud.ke.rulelearning.learner.RandomForestRuleGenerationLearner;
-import de.tud.ke.rulelearning.learner.evaluation.DefaultAggregation;
-import de.tud.ke.rulelearning.learner.evaluation.MicroAveraging;
-import de.tud.ke.rulelearning.learner.evaluation.MultiLabelEvaluation;
-import de.tud.ke.rulelearning.learner.evaluation.PartialPredictionStrategy;
 import de.tud.ke.rulelearning.util.IteratorUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,9 +52,7 @@ public class MainCoveringMEstimate {
                 RandomForestRuleGenerationLearner::new;
 
         for (Heuristic heuristic : new HeuristicIterable()) {
-            MultiLabelEvaluation coveringEvaluation = new MultiLabelEvaluation(heuristic,
-                    new PartialPredictionStrategy(), new MicroAveraging(new DefaultAggregation()));
-            configurationBuilder.setCoveringEvaluation(coveringEvaluation);
+            configurationBuilder.setCoveringHeuristic(heuristic);
             batchExperiment.addExperiment(sharedData -> new RuleGenerationExperiment(sharedData,
                     configurationBuilder.build(), learnerFactory, ""));
         }

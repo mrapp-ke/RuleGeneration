@@ -1,12 +1,9 @@
 package de.tud.ke.rulelearning.experiments;
 
 import de.tud.ke.rulelearning.heuristics.FMeasure;
+import de.tud.ke.rulelearning.heuristics.Heuristic;
 import de.tud.ke.rulelearning.learner.covering.Covering;
 import de.tud.ke.rulelearning.learner.covering.StoppingCriterion;
-import de.tud.ke.rulelearning.learner.evaluation.DefaultAggregation;
-import de.tud.ke.rulelearning.learner.evaluation.MicroAveraging;
-import de.tud.ke.rulelearning.learner.evaluation.MultiLabelEvaluation;
-import de.tud.ke.rulelearning.learner.evaluation.PartialPredictionStrategy;
 
 import java.util.Objects;
 
@@ -20,8 +17,7 @@ public class RuleGenerationConfiguration extends BaseConfigurationProxy {
 
         private Covering.Type covering = null;
 
-        private MultiLabelEvaluation coveringEvaluation = new MultiLabelEvaluation(new FMeasure(),
-                new PartialPredictionStrategy(), new MicroAveraging(new DefaultAggregation()));
+        private Heuristic coveringHeuristic = new FMeasure();
 
         private StoppingCriterion.Type stoppingCriterion = null;
 
@@ -49,12 +45,12 @@ public class RuleGenerationConfiguration extends BaseConfigurationProxy {
             return this;
         }
 
-        public MultiLabelEvaluation getCoveringEvaluation() {
-            return coveringEvaluation;
+        public Heuristic getCoveringHeuristic() {
+            return coveringHeuristic;
         }
 
-        public Builder setCoveringEvaluation(final MultiLabelEvaluation coveringEvaluation) {
-            this.coveringEvaluation = coveringEvaluation;
+        public Builder setCoveringHeuristic(final Heuristic coveringHeuristic) {
+            this.coveringHeuristic = coveringHeuristic;
             return this;
         }
 
@@ -68,7 +64,7 @@ public class RuleGenerationConfiguration extends BaseConfigurationProxy {
         }
 
         public RuleGenerationConfiguration build() {
-            return new RuleGenerationConfiguration(baseConfiguration, minRules, covering, coveringEvaluation,
+            return new RuleGenerationConfiguration(baseConfiguration, minRules, covering, coveringHeuristic,
                     stoppingCriterion);
         }
 
@@ -78,17 +74,17 @@ public class RuleGenerationConfiguration extends BaseConfigurationProxy {
 
     private final Covering.Type covering;
 
-    private final MultiLabelEvaluation coveringEvaluation;
+    private final Heuristic coveringHeuristic;
 
     private final StoppingCriterion.Type stoppingCriterion;
 
     private RuleGenerationConfiguration(final BaseConfiguration baseConfiguration, final int minRules,
-                                        final Covering.Type covering, final MultiLabelEvaluation coveringEvaluation,
+                                        final Covering.Type covering, final Heuristic coveringHeuristic,
                                         final StoppingCriterion.Type stoppingCriterion) {
         super(baseConfiguration);
         this.minRules = minRules;
         this.covering = covering;
-        this.coveringEvaluation = coveringEvaluation;
+        this.coveringHeuristic = coveringHeuristic;
         this.stoppingCriterion = stoppingCriterion;
     }
 
@@ -100,8 +96,8 @@ public class RuleGenerationConfiguration extends BaseConfigurationProxy {
         return covering;
     }
 
-    public MultiLabelEvaluation getCoveringEvaluation() {
-        return coveringEvaluation;
+    public Heuristic getCoveringHeuristic() {
+        return coveringHeuristic;
     }
 
     public StoppingCriterion.Type getStoppingCriterion() {
@@ -113,15 +109,13 @@ public class RuleGenerationConfiguration extends BaseConfigurationProxy {
         return getBaseConfiguration().toString() +
                 "-min-rules " + minRules + "\n" +
                 "-covering " + (covering != null ? covering.getValue() : null) + "\n" +
-                "-covering-heuristic " + getCoveringEvaluation().getEvaluationStrategy() + "_" +
-                getCoveringEvaluation().getHeuristic() + "_" + getCoveringEvaluation().getAveragingStrategy() + "\n" +
+                "-covering-heuristic " + coveringHeuristic + "\n" +
                 "-stopping-criterion " + getStoppingCriterion() + "\n";
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), minRules, covering, coveringEvaluation,
-                stoppingCriterion);
+        return Objects.hash(super.hashCode(), minRules, covering, coveringHeuristic, stoppingCriterion);
     }
 
     @Override
@@ -132,7 +126,7 @@ public class RuleGenerationConfiguration extends BaseConfigurationProxy {
         RuleGenerationConfiguration that = (RuleGenerationConfiguration) o;
         return that.minRules == minRules &&
                 covering == that.covering &&
-                Objects.equals(that.getCoveringEvaluation(), getCoveringEvaluation()) &&
+                Objects.equals(that.getCoveringHeuristic(), getCoveringHeuristic()) &&
                 stoppingCriterion == that.stoppingCriterion;
     }
 

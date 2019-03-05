@@ -1,9 +1,9 @@
 package de.tud.ke.rulelearning.experiments;
 
+import de.tud.ke.rulelearning.heuristics.Heuristic;
 import de.tud.ke.rulelearning.learner.AbstractMultiLabelRuleLearner;
 import de.tud.ke.rulelearning.learner.AbstractRuleGenerationLearner;
 import de.tud.ke.rulelearning.learner.covering.Covering;
-import de.tud.ke.rulelearning.learner.evaluation.MultiLabelEvaluation;
 
 import java.util.function.BiFunction;
 
@@ -49,9 +49,8 @@ public class RuleGenerationExperiment extends AbstractSingleRuleLearnerExperimen
         Covering.Type covering = getConfiguration().getCovering();
 
         if (covering != null) {
-            MultiLabelEvaluation coveringEvaluation = getConfiguration().getCoveringEvaluation();
-            return name + ("_" + covering.getValue() + "-covering_" + coveringEvaluation.getEvaluationStrategy() + "_" +
-                    coveringEvaluation.getAveragingStrategy() + "_" + coveringEvaluation.getHeuristic());
+            Heuristic heuristic = getConfiguration().getCoveringHeuristic();
+            return name + ("_" + covering.getValue() + "-covering_" + heuristic);
         }
 
         return name;

@@ -37,7 +37,7 @@ public abstract class AbstractRuleGenerationLearner extends AbstractMultiLabelRu
         if (covering != null) {
             RuleSet coveringRules = new RuleSet();
             coveringRules.addAll(covering.getCoveringRules(model, trainingDataSet, getModelStats().getLabelStats(),
-                    getConfiguration().getCoveringEvaluation().getHeuristic()));
+                    getConfiguration().getCoveringHeuristic()));
             return coveringRules;
         } else {
             return model;
