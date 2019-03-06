@@ -10,8 +10,6 @@ import org.slf4j.LoggerFactory;
 import weka.core.Instance;
 import weka.core.Instances;
 
-import java.util.Map;
-
 /**
  * @author Michael Rapp <mrapp@ke-tu-darmstadt.de>
  */
@@ -38,17 +36,19 @@ public class LabelWiseCovering implements Covering {
             Rule bestRule = pollBestRule(rules, labelIndex, heuristic);
 
             if (bestRule != null) {
-                Map<Integer, TrainingInstance> coveredInstances = trainingDataSet.getCoveredInstances(bestRule);
+                for (int i = instances.getNumInstances() - 1; i >= 0; i--) {
+                    Instance instance = instances.getDataSet().get(i);
 
-                for (TrainingInstance instance : coveredInstances.values()) {
-                    instances.getDataSet().remove(instance.getIndex());
+                    if (bestRule.covers(instance)) {
+                        instances.getDataSet().remove(i);
 
-                    if (instance.stringValue(labelIndex).equals(targetPrediction ? "1" : "0")) {
-                        uncoveredCount--;
-                    }
+                        if (instance.stringValue(labelIndex).equals(targetPrediction ? "1" : "0")) {
+                            uncoveredCount--;
+                        }
 
-                    if (revalidate) {
-                        revalidateRules(rules, instance, labelIndex, targetPrediction);
+                        if (revalidate) {
+                            revalidateRules(rules, instance, labelIndex, targetPrediction);
+                        }
                     }
                 }
 
