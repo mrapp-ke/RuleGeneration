@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import weka.core.Instance;
 import weka.core.Instances;
 
+import java.util.Map;
+
 /**
  * @author Michael Rapp <mrapp@ke-tu-darmstadt.de>
  */
@@ -33,34 +35,24 @@ public class LabelWiseCovering implements Covering {
 
         while (uncoveredCount > 0) {
             LOG.info("{} uncovered labels remaining...", uncoveredCount);
-            Rule bestRule = pollBestRule(rules, labelIndex, heuristic, labelStats);
+            Rule bestRule = pollBestRule(rules, labelIndex, heuristic);
 
             if (bestRule != null) {
-                for (int i = instances.getNumInstances() - 1; i >= 0; i--) {
-                    Instance instance = instances.getDataSet().get(i);
+                Map<Integer, TrainingInstance> coveredInstances = trainingDataSet.getCoveredInstances(bestRule);
 
-                    if (bestRule.covers(instance)) {
-                        instances.getDataSet().remove(i);
+                for (TrainingInstance instance : coveredInstances.values()) {
+                    instances.getDataSet().remove(instance.getIndex());
 
-                        if (instance.stringValue(labelIndex).equals(targetPrediction ? "1" : "0")) {
-                            uncoveredCount--;
-                        }
+                    if (instance.stringValue(labelIndex).equals(targetPrediction ? "1" : "0")) {
+                        uncoveredCount--;
+                    }
 
-                        if (revalidate) {
-                            revalidateRules(rules, instance, labelIndex, targetPrediction);
-                        }
+                    if (revalidate) {
+                        revalidateRules(rules, instance, labelIndex, targetPrediction);
                     }
                 }
 
-                Head existingHead = bestRule.getHead();
-                Head newHead = new Head(existingHead.getCondition(labelIndex));
-                newHead.setLabelWiseHeuristicValue(labelIndex, existingHead.getLabelWiseHeuristicValue(labelIndex));
-                newHead.setLabelWiseConfusionMatrix(labelIndex, existingHead.getLabelWiseConfusionMatrix(labelIndex));
-                Rule rule = new Rule(bestRule.getBody(), newHead);
-                rule.setConfusionMatrix(bestRule.getConfusionMatrix());
-                rule.setHeuristicValue(bestRule.getHeuristicValue());
-                rule.setCoverage(bestRule.getCoverage());
-                result.add(rule);
+                result.add(bestRule);
             } else {
                 break;
             }
@@ -112,8 +104,7 @@ public class LabelWiseCovering implements Covering {
         return rules;
     }
 
-    private Rule pollBestRule(final RuleSet ruleSet, final int labelIndex, final Heuristic heuristic,
-                              final LabelStats labelStats) {
+    private Rule pollBestRule(final RuleSet ruleSet, final int labelIndex, final Heuristic heuristic) {
         Rule bestRule = null;
         double bestH = 0;
 
