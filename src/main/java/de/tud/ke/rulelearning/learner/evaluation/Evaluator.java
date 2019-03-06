@@ -2,15 +2,11 @@ package de.tud.ke.rulelearning.learner.evaluation;
 
 import de.tud.ke.rulelearning.heuristics.ConfusionMatrix;
 import de.tud.ke.rulelearning.model.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Map;
 
 public class Evaluator {
-
-    private static final Logger LOG = LoggerFactory.getLogger(Evaluator.class);
 
     private void aggregate(final boolean targetPrediction, final boolean trueLabel, final double weight,
                            final Head head, final int labelIndex, final ConfusionMatrix confusionMatrix,
@@ -67,12 +63,8 @@ public class Evaluator {
     }
 
     public void evaluate(final DataSet dataSet, final Collection<Rule> rules) {
-        int i = 1;
-
         for (Rule rule : rules) {
-            LOG.info("Evaluating rule {} / {}...", i, rules.size());
             evaluate(dataSet, rule);
-            i++;
         }
     }
 
