@@ -19,9 +19,13 @@ public abstract class AbstractMultiLabelLearner<ConfigType extends BaseConfigura
 
     public interface Callback<ModelType, StatsType> {
 
-        void onModelTrained(DataSet trainingData, int fold,
-                            AbstractMultiLabelLearner<?, ModelType, StatsType> learner, ModelType model,
-                            StatsType stats);
+        void onModelBuilt(DataSet trainingData, int fold,
+                          AbstractMultiLabelLearner<?, ModelType, StatsType> learner, ModelType model,
+                          StatsType stats);
+
+        void onModelFinalized(DataSet trainingData, int fold,
+                              AbstractMultiLabelLearner<?, ModelType, StatsType> learner, ModelType model,
+                              StatsType stats);
 
     }
 
@@ -67,10 +71,6 @@ public abstract class AbstractMultiLabelLearner<ConfigType extends BaseConfigura
 
     protected StatsType createModelStats(final DataSet trainingDataSet, final ModelType model) {
         return null;
-    }
-
-    protected void onModelBuilt(final DataSet trainingDataSet, final ModelType model) {
-
     }
 
     protected ModelType finalizeModel(final DataSet trainingDataSet, final ModelType model)
@@ -138,7 +138,10 @@ public abstract class AbstractMultiLabelLearner<ConfigType extends BaseConfigura
         }
 
         this.modelStats = createModelStats(trainingDataSet, model);
-        onModelBuilt(trainingDataSet, model);
+
+        if (callback != null) {
+            callback.onModelBuilt(trainingDataSet, currentFold, this, model, modelStats);
+        }
 
         if (modelDirPath != null && !loadedFromSaveFile) {
             saveModel(modelDirPath, model);
@@ -151,7 +154,7 @@ public abstract class AbstractMultiLabelLearner<ConfigType extends BaseConfigura
         this.modelStats = createModelStats(trainingDataSet, model);
 
         if (callback != null) {
-            callback.onModelTrained(trainingDataSet, currentFold, this, model, modelStats);
+            callback.onModelFinalized(trainingDataSet, currentFold, this, model, modelStats);
         }
     }
 

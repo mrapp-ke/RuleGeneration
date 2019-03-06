@@ -20,34 +20,69 @@ import java.io.IOException;
 public abstract class AbstractSingleRuleLearnerExperiment<ConfigType extends BaseConfiguration> extends
         AbstractSingleExperiment<ConfigType, RuleSet, AbstractMultiLabelRuleLearner.Stats, AbstractMultiLabelRuleLearner<ConfigType>> {
 
-    private class LearnerCallback implements AbstractMultiLabelRuleLearner.Callback<RuleSet, AbstractMultiLabelRuleLearner.Stats> {
+    private class LearnerCallback implements
+            AbstractMultiLabelRuleLearner.Callback<RuleSet, AbstractMultiLabelRuleLearner.Stats> {
 
         @Override
-        public void onModelTrained(final DataSet trainingData, final int fold,
-                                   final AbstractMultiLabelLearner<?, RuleSet, AbstractMultiLabelRuleLearner.Stats> learner,
-                                   final RuleSet ruleSet, final AbstractMultiLabelRuleLearner.Stats stats) {
+        public void onModelBuilt(final DataSet trainingData, final int fold,
+                                 final AbstractMultiLabelLearner<?, RuleSet, AbstractMultiLabelRuleLearner.Stats> learner,
+                                 final RuleSet model, final AbstractMultiLabelRuleLearner.Stats stats) {
+            saveModelStatisticsToDisk(stats.getRuleStats(), "built_model_statistics", trainingData.getDataSet());
+        }
+
+        @Override
+        public void onModelFinalized(final DataSet trainingData, final int fold,
+                                     final AbstractMultiLabelLearner<?, RuleSet, AbstractMultiLabelRuleLearner.Stats> learner,
+                                     final RuleSet ruleSet, final AbstractMultiLabelRuleLearner.Stats stats) {
             saveRulesToDisk(ruleSet, getName() + "_rules", trainingData.getDataSet());
-            saveModelStatisticsToDisk(stats.getRuleStats(), "model_statistics", trainingData.getDataSet());
+            saveModelStatisticsToDisk(stats.getRuleStats(), "finalized_model_statistics", trainingData.getDataSet());
         }
 
     }
 
-    private class LearnerCrossValidationCallback implements AbstractMultiLabelRuleLearner.Callback<RuleSet, AbstractMultiLabelRuleLearner.Stats> {
+    private class LearnerCrossValidationCallback implements
+            AbstractMultiLabelRuleLearner.Callback<RuleSet, AbstractMultiLabelRuleLearner.Stats> {
 
-        private final MultipleRuleStats multipleRuleStats = new MultipleRuleStats();
+        private MultipleRuleStats multipleRuleStats = null;
 
         @Override
-        public void onModelTrained(final DataSet trainingData, final int fold,
-                                   final AbstractMultiLabelLearner<?, RuleSet, AbstractMultiLabelRuleLearner.Stats> learner,
-                                   final RuleSet ruleSet, final AbstractMultiLabelRuleLearner.Stats stats) {
-            saveRulesToDisk(ruleSet, getName() + "_rules_" + fold, trainingData.getDataSet());
-            saveModelStatisticsToDisk(stats.getRuleStats(), "model_statistics_fold_" + fold,
+        public void onModelBuilt(final DataSet trainingData, final int fold,
+                                 final AbstractMultiLabelLearner<?, RuleSet, AbstractMultiLabelRuleLearner.Stats> learner,
+                                 final RuleSet model, final AbstractMultiLabelRuleLearner.Stats stats) {
+            saveModelStatisticsToDisk(stats.getRuleStats(), "built_model_statistics_fold_" + fold,
                     trainingData.getDataSet());
+
+            if (multipleRuleStats == null) {
+                multipleRuleStats = new MultipleRuleStats();
+            }
+
             multipleRuleStats.addRuleStats(stats.getRuleStats());
 
             if (fold == getConfiguration().getCrossValidationFolds()) {
-                saveMultipleModelStatisticsToDisk(multipleRuleStats, "model_statistics_overall",
+                saveMultipleModelStatisticsToDisk(multipleRuleStats, "built_model_statistics_overall",
                         trainingData.getDataSet());
+                multipleRuleStats = null;
+            }
+        }
+
+        @Override
+        public void onModelFinalized(final DataSet trainingData, final int fold,
+                                     final AbstractMultiLabelLearner<?, RuleSet, AbstractMultiLabelRuleLearner.Stats> learner,
+                                     final RuleSet ruleSet, final AbstractMultiLabelRuleLearner.Stats stats) {
+            saveRulesToDisk(ruleSet, getName() + "_rules_" + fold, trainingData.getDataSet());
+            saveModelStatisticsToDisk(stats.getRuleStats(), "finalized_model_statistics_fold_" + fold,
+                    trainingData.getDataSet());
+
+            if (multipleRuleStats == null) {
+                multipleRuleStats = new MultipleRuleStats();
+            }
+
+            multipleRuleStats.addRuleStats(stats.getRuleStats());
+
+            if (fold == getConfiguration().getCrossValidationFolds()) {
+                saveMultipleModelStatisticsToDisk(multipleRuleStats, "finalized_model_statistics_overall",
+                        trainingData.getDataSet());
+                multipleRuleStats = null;
             }
         }
 

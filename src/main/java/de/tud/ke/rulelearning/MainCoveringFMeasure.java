@@ -52,11 +52,9 @@ public class MainCoveringFMeasure {
         final BiFunction<String, RuleGenerationConfiguration, AbstractRuleGenerationLearner> learnerFactory =
                 RandomForestRuleGenerationLearner::new;
 
-        for (Heuristic heuristic : new HeuristicIterable()) {
-            configurationBuilder.setCoveringHeuristic(heuristic);
-            batchExperiment.addExperiment(sharedData -> new RuleGenerationExperiment(sharedData,
-                    configurationBuilder.build(), learnerFactory, ""));
-        }
+        configurationBuilder.setCoveringHeuristic(new FMeasure(0));
+        batchExperiment.addExperiment(sharedData -> new RuleGenerationExperiment(sharedData,
+                configurationBuilder.build(), learnerFactory, ""));
 
         batchExperiment.run();
     }
