@@ -20,14 +20,14 @@ public abstract class AbstractSerializableMultiLabelLearner<ConfigType extends B
     }
 
     protected <T extends Serializable> T loadFromFile(final String path) throws Exception {
-        try (ObjectInputStream stream = new ObjectInputStream(new FileInputStream(path))) {
+        try (ObjectInputStream stream = new ObjectInputStream(new BufferedInputStream(new FileInputStream(path)))) {
             //noinspection unchecked
             return (T) stream.readObject();
         }
     }
 
     protected void saveToFile(final String path, final Serializable object) throws Exception {
-        try (ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(path))) {
+        try (ObjectOutputStream stream = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(path)))) {
             stream.writeObject(object);
         }
     }
