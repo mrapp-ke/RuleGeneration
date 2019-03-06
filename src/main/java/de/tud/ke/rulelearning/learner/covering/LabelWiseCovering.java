@@ -3,12 +3,13 @@ package de.tud.ke.rulelearning.learner.covering;
 import de.tud.ke.rulelearning.heuristics.ConfusionMatrix;
 import de.tud.ke.rulelearning.heuristics.Heuristic;
 import de.tud.ke.rulelearning.model.*;
-import mulan.data.InvalidDataFormatException;
-import mulan.data.MultiLabelInstances;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import weka.core.Instance;
-import weka.core.Instances;
+
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Michael Rapp <mrapp@ke-tu-darmstadt.de>
@@ -23,26 +24,26 @@ public class LabelWiseCovering implements Covering {
 
     private RuleSet coverLabelWise(final RuleSet ruleSet, final DataSet trainingDataSet,
                                    final int labelIndex, final LabelStats labelStats, final Heuristic heuristic,
-                                   final boolean targetPrediction) throws InvalidDataFormatException {
-        MultiLabelInstances instances = new MultiLabelInstances(
-                new Instances(trainingDataSet.getDataSet().getDataSet()),
-                trainingDataSet.getDataSet().getLabelsMetaData());
+                                   final boolean targetPrediction) {
         int uncoveredCount = targetPrediction ? labelStats.getP(labelIndex) : labelStats.getN(labelIndex);
         RuleSet rules = getRulesByLabelIndex(ruleSet, labelIndex, targetPrediction);
         RuleSet result = new RuleSet();
+        Set<Integer> coveredIndices = new HashSet<>();
 
         while (uncoveredCount > 0) {
             LOG.info("{} uncovered labels remaining...", uncoveredCount);
             Rule bestRule = pollBestRule(rules, labelIndex, heuristic);
 
             if (bestRule != null) {
-                for (int i = instances.getNumInstances() - 1; i >= 0; i--) {
-                    Instance instance = instances.getDataSet().get(i);
+                Map<Integer, TrainingInstance> coveredInstances = trainingDataSet.getCoveredInstances(bestRule);
 
-                    if (bestRule.covers(instance)) {
-                        instances.getDataSet().remove(i);
+                for (Map.Entry<Integer, TrainingInstance> entry : coveredInstances.entrySet()) {
+                    int index = entry.getKey();
 
-                        if (instance.stringValue(labelIndex).equals(targetPrediction ? "1" : "0")) {
+                    if (coveredIndices.add(index)) {
+                        Instance instance = entry.getValue();
+
+                        if (instance.value(labelIndex) == (targetPrediction ? 1 : 0)) {
                             uncoveredCount--;
                         }
 
@@ -63,7 +64,7 @@ public class LabelWiseCovering implements Covering {
 
     private void revalidateRules(final RuleSet rules, final Instance coveredInstance, final int labelIndex,
                                  final boolean targetPrediction) {
-        boolean trueLabel = coveredInstance.stringValue(labelIndex).equals("1");
+        boolean trueLabel = coveredInstance.value(labelIndex) == 1;
 
         for (Rule rule : rules) {
             Head head = rule.getHead();
@@ -141,7 +142,7 @@ public class LabelWiseCovering implements Covering {
 
     @Override
     public RuleSet getCoveringRules(final RuleSet ruleSet, final DataSet trainingDataSet,
-                                    final LabelStats labelStats, final Heuristic heuristic) throws Exception {
+                                    final LabelStats labelStats, final Heuristic heuristic) {
         RuleSet result = new RuleSet();
 
         for (int labelIndex : trainingDataSet.getLabelIndices()) {
