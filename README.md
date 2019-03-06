@@ -16,19 +16,19 @@ Currently the following main classes are provided:
 
 Various command line parameters must be passed to these main classes in order to run the program:
 
-| Parameter          | Optional? | Default | Description                                                                                                                                                         |
-|--------------------|-----------|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| arff               |  No       | null    | The path of file that should be used as the training set (or cross validation set).                                                                                 |
-| test-arff          |  Yes      | null    | The path of the file that should be used as the test set (if no cross validation is used).                                                                          |
-| xml                | No        | null    | The path of the XML file that contains information about the labels in the given arff file.                                                                         |
-| output-dir         | Yes       | null    |  The path of the directory where the CSV output files should be stored.                                                                                             |
-| model-dir          | Yes       | null    | The path of the directory where the generated rules should be stored.                                                                                               |
-| cross-validation   | Yes       | false   | "true" if cross validation should be used, "false" otherwise.                                                                                                       |
-| folds              | Yes       | 10      | The number of cross validation folds to be used.                                                                                                                    |
-|  min-rules         | Yes       | 300000  | The number of rules to be generated at least.                                                                                                                       |
-| covering           | Yes       | null    | The name of the covering algorithm to be used. Must be "label-wise" or "label-wise-no-revalidation".                                                                |
-| covering-heuristic | Yes       |         | The heuristic to be used by the covering algorithm. Must be "precision", "recall", "accuracy", "f<x>-measure", "<x>-estimate" (<x> must be replaced with a number). |
-| stopping-criterion | Yes       | null    | The stopping criterion to be used by the covering algorithm. Must be "coverage".                                                                                    |
+| Parameter          | Optional? | Default    | Description                                                                                                                                                         |
+|--------------------|-----------|------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| arff               |  No       | null       | The path of file that should be used as the training set (or cross validation set).                                                                                 |
+| test-arff          |  Yes      | null       | The path of the file that should be used as the test set (if no cross validation is used).                                                                          |
+| xml                | No        | null       | The path of the XML file that contains information about the labels in the given arff file.                                                                         |
+| output-dir         | Yes       | null       |  The path of the directory where the CSV output files should be stored.                                                                                             |
+| model-dir          | Yes       | null       | The path of the directory where the generated rules should be stored.                                                                                               |
+| cross-validation   | Yes       | false      | "true" if cross validation should be used, "false" otherwise.                                                                                                       |
+| folds              | Yes       | 10         | The number of cross validation folds to be used.                                                                                                                    |
+|  min-rules         | Yes       | 300000     | The number of rules to be generated at least.                                                                                                                       |
+| covering           | Yes       | null       | The name of the covering algorithm to be used. Must be "label-wise" or "label-wise-no-revalidation".                                                                |
+| covering-heuristic | Yes       | f1-measure | The heuristic to be used by the covering algorithm. Must be "precision", "recall", "accuracy", "f<x>-measure", "<x>-estimate" (<x> must be replaced with a number). |
+| stopping-criterion | Yes       | null       | The stopping criterion to be used by the covering algorithm. Must be "coverage".                                                                                    |
 
 The program is also available as a jar-file. It can for example be executed from the command line as follows:
 
