@@ -109,7 +109,7 @@ public class DataSet implements Iterable<Instance>, Serializable {
 
         switch (comparator) {
             case LESS:
-                intStream = index >= 0 ? IntStream.rangeClosed(0, index) :
+                intStream = index >= 0 ? IntStream.range(0, index) :
                         IntStream.range(0, Math.abs(index) - 1);
                 break;
             case GREATER_OR_EQUAL:
