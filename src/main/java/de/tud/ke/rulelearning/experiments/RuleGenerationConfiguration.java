@@ -7,9 +7,9 @@ import de.tud.ke.rulelearning.learner.covering.StoppingCriterion;
 
 import java.util.Objects;
 
-public class RuleGenerationConfiguration extends BaseConfigurationProxy {
+public class RuleGenerationConfiguration extends RuleLearnerConfiguration {
 
-    public static class Builder extends Configuration.AbstractBuilder<Builder> {
+    public static class Builder extends RuleLearnerConfiguration.AbstractBuilder<Builder> {
 
         private final BaseConfiguration baseConfiguration;
 
@@ -64,8 +64,8 @@ public class RuleGenerationConfiguration extends BaseConfigurationProxy {
         }
 
         public RuleGenerationConfiguration build() {
-            return new RuleGenerationConfiguration(baseConfiguration, minRules, covering, coveringHeuristic,
-                    stoppingCriterion);
+            return new RuleGenerationConfiguration(baseConfiguration, isRuleCsvFileSaved(), minRules, covering,
+                    coveringHeuristic, stoppingCriterion);
         }
 
     }
@@ -78,10 +78,11 @@ public class RuleGenerationConfiguration extends BaseConfigurationProxy {
 
     private final StoppingCriterion.Type stoppingCriterion;
 
-    private RuleGenerationConfiguration(final BaseConfiguration baseConfiguration, final int minRules,
-                                        final Covering.Type covering, final Heuristic coveringHeuristic,
+    private RuleGenerationConfiguration(final BaseConfiguration baseConfiguration, final boolean saveRuleCsvFile,
+                                        final int minRules, final Covering.Type covering,
+                                        final Heuristic coveringHeuristic,
                                         final StoppingCriterion.Type stoppingCriterion) {
-        super(baseConfiguration);
+        super(baseConfiguration, saveRuleCsvFile);
         this.minRules = minRules;
         this.covering = covering;
         this.coveringHeuristic = coveringHeuristic;
@@ -106,7 +107,7 @@ public class RuleGenerationConfiguration extends BaseConfigurationProxy {
 
     @Override
     public String toString() {
-        return getBaseConfiguration().toString() +
+        return super.toString() +
                 "-min-rules " + minRules + "\n" +
                 "-covering " + (covering != null ? covering.getValue() : null) + "\n" +
                 "-covering-heuristic " + coveringHeuristic + "\n" +

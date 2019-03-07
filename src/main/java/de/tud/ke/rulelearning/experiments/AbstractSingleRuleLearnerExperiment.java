@@ -17,7 +17,7 @@ import java.io.IOException;
  *
  * @author Michael Rapp <mrapp@ke.tu-darmstadt.de>
  */
-public abstract class AbstractSingleRuleLearnerExperiment<ConfigType extends BaseConfiguration> extends
+public abstract class AbstractSingleRuleLearnerExperiment<ConfigType extends RuleLearnerConfiguration> extends
         AbstractSingleExperiment<ConfigType, RuleSet, AbstractMultiLabelRuleLearner.Stats, AbstractMultiLabelRuleLearner<ConfigType>> {
 
     private class LearnerCallback implements
@@ -92,15 +92,17 @@ public abstract class AbstractSingleRuleLearnerExperiment<ConfigType extends Bas
 
     private void saveRulesToDisk(final Iterable<Rule> rules, final String outputFileName,
                                  final MultiLabelInstances dataSet) {
-        String fileName = outputFileName.toLowerCase().endsWith(".csv") ? outputFileName : outputFileName + ".csv";
-        String outputDir = getConfiguration().getOutputDirPath().toAbsolutePath().toString();
+        if (getConfiguration().isRuleCsvFileSaved()) {
+            String fileName = outputFileName.toLowerCase().endsWith(".csv") ? outputFileName : outputFileName + ".csv";
+            String outputDir = getConfiguration().getOutputDirPath().toAbsolutePath().toString();
 
-        try (RuleCsvPrinter csvPrinter = new RuleCsvPrinter(outputDir, fileName, dataSet)) {
-            for (Rule rule : rules) {
-                csvPrinter.print(rule);
+            try (RuleCsvPrinter csvPrinter = new RuleCsvPrinter(outputDir, fileName, dataSet)) {
+                for (Rule rule : rules) {
+                    csvPrinter.print(rule);
+                }
+            } catch (IOException e) {
+                LOG.error("Failed to save rules to disk", e);
             }
-        } catch (IOException e) {
-            LOG.error("Failed to save rules to disk", e);
         }
     }
 

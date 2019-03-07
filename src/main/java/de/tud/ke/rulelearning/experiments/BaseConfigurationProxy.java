@@ -86,6 +86,11 @@ public class BaseConfigurationProxy implements BaseConfiguration {
     }
 
     @Override
+    public String toString() {
+        return getBaseConfiguration().toString();
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(baseConfiguration);
     }

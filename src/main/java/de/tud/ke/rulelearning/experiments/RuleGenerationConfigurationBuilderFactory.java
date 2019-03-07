@@ -14,6 +14,7 @@ public final class RuleGenerationConfigurationBuilderFactory {
 
     public static RuleGenerationConfiguration.Builder create(final BaseConfiguration baseConfiguration,
                                                              final String[] args) {
+        boolean saveRuleCsvFile = ConfigUtil.getBooleanArgument("save-rule-csv-file", args, false);
         int maxRules = ConfigUtil.getIntArgument("min-rules", args, 300000);
         String coveringType = ConfigUtil.getOptionalArgument("covering", args);
         Covering.Type covering = coveringType != null ? Covering.Type.fromValue(coveringType) : null;
@@ -22,6 +23,7 @@ public final class RuleGenerationConfigurationBuilderFactory {
         StoppingCriterion.Type stoppingCriterion = stoppingCriterionType != null ?
                 StoppingCriterion.Type.fromValue(stoppingCriterionType) : null;
         return new RuleGenerationConfiguration.Builder(baseConfiguration)
+                .setRuleCsvFileSaved(saveRuleCsvFile)
                 .setMinRules(maxRules)
                 .setCovering(covering)
                 .setCoveringHeuristic(coveringHeuristic)
