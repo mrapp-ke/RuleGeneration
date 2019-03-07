@@ -1,7 +1,9 @@
 package de.tud.ke.rulelearning.learner.evaluation;
 
 import de.tud.ke.rulelearning.heuristics.ConfusionMatrix;
-import de.tud.ke.rulelearning.model.*;
+import de.tud.ke.rulelearning.model.DataSet;
+import de.tud.ke.rulelearning.model.Rule;
+import de.tud.ke.rulelearning.model.TrainingInstance;
 
 import java.util.Collection;
 import java.util.Map;
@@ -9,55 +11,18 @@ import java.util.Map;
 public class Evaluator {
 
     private void aggregate(final boolean targetPrediction, final boolean trueLabel, final double weight,
-                           final Head head, final int labelIndex, final ConfusionMatrix confusionMatrix,
-                           final ConfusionMatrix stats) {
-        Condition condition = head.getCondition(labelIndex);
+                           final ConfusionMatrix confusionMatrix, final ConfusionMatrix stats) {
+        if (trueLabel == targetPrediction) {
+            confusionMatrix.addTruePositives(weight);
 
-        if (condition instanceof NominalCondition) {
-            NominalCondition nominalCondition = (NominalCondition) condition;
-
-            if (trueLabel == targetPrediction) {
-                if (nominalCondition.getValue().equals(targetPrediction ? "1" : "0")) {
-                    confusionMatrix.addTruePositives(weight);
-
-                    if (stats != null) {
-                        stats.addTruePositives(weight);
-                    }
-                } else {
-                    confusionMatrix.addFalseNegatives(weight);
-
-                    if (stats != null) {
-                        stats.addFalseNegatives(weight);
-                    }
-                }
-            } else {
-                if (nominalCondition.getValue().equals(targetPrediction ? "1" : "0")) {
-                    confusionMatrix.addFalsePositives(weight);
-
-                    if (stats != null) {
-                        stats.addFalsePositives(weight);
-                    }
-                } else {
-                    confusionMatrix.addTrueNegatives(weight);
-
-                    if (stats != null) {
-                        stats.addTrueNegatives(weight);
-                    }
-                }
+            if (stats != null) {
+                stats.addTruePositives(weight);
             }
         } else {
-            if (trueLabel == targetPrediction) {
-                confusionMatrix.addFalseNegatives(weight);
+            confusionMatrix.addFalsePositives(weight);
 
-                if (stats != null) {
-                    stats.addFalseNegatives(weight);
-                }
-            } else {
-                confusionMatrix.addTrueNegatives(weight);
-
-                if (stats != null) {
-                    stats.addTrueNegatives(weight);
-                }
+            if (stats != null) {
+                stats.addFalsePositives(weight);
             }
         }
     }
@@ -71,7 +36,6 @@ public class Evaluator {
     public void evaluate(final DataSet dataSet, final Rule rule) {
         Map<Integer, TrainingInstance> coveredInstances = dataSet.getCoveredInstances(rule);
         rule.setCoverage(coveredInstances.size());
-        Head head = rule.getHead();
         ConfusionMatrix globalConfusionMatrix = new ConfusionMatrix();
 
         for (int labelIndex : dataSet.getLabelIndices()) {
@@ -82,19 +46,19 @@ public class Evaluator {
 
             for (TrainingInstance trainingInstance : coveredInstances.values()) {
                 boolean trueLabel = trainingInstance.stringValue(labelIndex).equals("1");
-                aggregate(targetPrediction, trueLabel, trainingInstance.weight(), head, labelIndex,
-                        labelWiseConfusionMatrix, globalConfusionMatrix);
+                aggregate(targetPrediction, trueLabel, trainingInstance.weight(), labelWiseConfusionMatrix,
+                        globalConfusionMatrix);
             }
 
             double remainingPositives = (targetPrediction ? positives : negatives)
-                    - labelWiseConfusionMatrix.getNumberOfPositives();
+                    - labelWiseConfusionMatrix.getNumberOfTruePositives();
             double remainingNegatives = (targetPrediction ? negatives : positives)
-                    - labelWiseConfusionMatrix.getNumberOfNegatives();
+                    - labelWiseConfusionMatrix.getNumberOfFalsePositives();
             labelWiseConfusionMatrix.addFalseNegatives(remainingPositives);
             globalConfusionMatrix.addFalseNegatives(remainingPositives);
             labelWiseConfusionMatrix.addTrueNegatives(remainingNegatives);
             globalConfusionMatrix.addTrueNegatives(remainingNegatives);
-            head.setLabelWiseConfusionMatrix(labelIndex, labelWiseConfusionMatrix);
+            rule.getHead().setLabelWiseConfusionMatrix(labelIndex, labelWiseConfusionMatrix);
         }
 
         rule.setConfusionMatrix(globalConfusionMatrix);

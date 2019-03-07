@@ -38,7 +38,7 @@ public class DataSet implements Iterable<Instance>, Serializable {
                     Map<Integer, TrainingInstance> filteredInstances = new HashMap<>();
 
                     for (Instance instance : this) {
-                        if (instance.isMissing(index) || !value.equals(instance.stringValue(index))) {
+                        if (!instance.isMissing(index) && value.equals(instance.stringValue(index))) {
                             TrainingInstance trainingInstance = (TrainingInstance) instance;
                             filteredInstances.put(trainingInstance.getIndex(), trainingInstance);
                         }
