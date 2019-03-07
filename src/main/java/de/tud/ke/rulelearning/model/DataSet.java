@@ -93,31 +93,28 @@ public class DataSet implements Iterable<Instance>, Serializable {
     }
 
     private Map<Integer, TrainingInstance> getInstancesByNumericAttribute(final Attribute attribute,
-                                                                          final NumericCondition.Comparator comparator,
-                                                                          final double value) {
+                                                                         final NumericCondition.Comparator comparator,
+                                                                         final double value) {
         Instances sortedInstances = getInstancesSortedByNumericAttribute(attribute);
         List<Double> mappedInstances = new MappedList<>(sortedInstances, instance -> instance.value(attribute));
-        int index = Math.abs(Collections.binarySearch(mappedInstances, value, Double::compare));
-        int absIndex = Math.abs(index);
+        int index = Collections.binarySearch(mappedInstances, value, Double::compare);
+
+        if (index >= 0) {
+            while (mappedInstances.get(index - 1) == value) {
+                index--;
+            }
+        }
+
         IntStream intStream;
 
         switch (comparator) {
             case LESS:
-                intStream = IntStream.range(0, absIndex);
-                break;
-            case LESS_OR_EQUAL:
-                intStream = index >= 0 ? IntStream.rangeClosed(0, index) : IntStream.range(0, absIndex);
-                break;
-            case EQUAL:
-                intStream = index >= 0 ? IntStream.rangeClosed(index, index) : IntStream.range(absIndex, absIndex);
-                break;
-            case GREATER:
-                intStream = index >= 0 ? IntStream.range(index + 1, mappedInstances.size()) :
-                        IntStream.range(absIndex, mappedInstances.size());
+                intStream = index >= 0 ? IntStream.rangeClosed(0, index) :
+                        IntStream.range(0, Math.abs(index) - 1);
                 break;
             case GREATER_OR_EQUAL:
                 intStream = index >= 0 ? IntStream.range(index, mappedInstances.size()) :
-                        IntStream.range(absIndex, mappedInstances.size());
+                        IntStream.range(Math.abs(index) - 1, mappedInstances.size());
                 break;
             default:
                 throw new IllegalArgumentException("Unknown comparator: " + comparator);

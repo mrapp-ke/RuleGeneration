@@ -10,17 +10,9 @@ public class NumericCondition extends Condition {
 
     public enum Comparator {
 
-        EQUAL("=", Objects::equals),
-
-        NOT_EQUAL("!=", (v1, v2) -> !Objects.equals(v1, v2)),
-
-        GREATER(">", (v1, v2) -> v1 > v2),
-
         GREATER_OR_EQUAL(">=", (v1, v2) -> v1 >= v2),
 
-        LESS("<", (v1, v2) -> v1 < v2),
-
-        LESS_OR_EQUAL("<=", (v1, v2) -> v1 <= v2);
+        LESS("<", (v1, v2) -> v1 < v2);
 
         private final String sign;
 
