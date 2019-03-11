@@ -15,6 +15,7 @@ public class RuleSetPredictor implements Predictor<RuleSet> {
         for (int i = 0; i < bipartition.length; i++) {
             int labelIndex = labelIndices[i];
             boolean targetPrediction = trainingDataSet.getTargetPrediction(labelIndex);
+            boolean prediction = !targetPrediction;
 
             for (Rule rule : model) {
                 Head head = rule.getHead();
@@ -24,11 +25,13 @@ public class RuleSetPredictor implements Predictor<RuleSet> {
                     NominalCondition nominalCondition = (NominalCondition) condition;
 
                     if (nominalCondition.getValue().equals(targetPrediction ? "1" : "0")) {
-                        bipartition[i] = targetPrediction;
+                        prediction = targetPrediction;
                         break;
                     }
                 }
             }
+
+            bipartition[i] = prediction;
         }
 
         return new MultiLabelOutput(bipartition);
