@@ -43,7 +43,9 @@ public abstract class AbstractSingleRuleLearnerExperiment<ConfigType extends Rul
     private class LearnerCrossValidationCallback implements
             AbstractMultiLabelRuleLearner.Callback<RuleSet, AbstractMultiLabelRuleLearner.Stats> {
 
-        private MultipleRuleStats multipleRuleStats = null;
+        private final MultipleRuleStats builtModelRuleStats = new MultipleRuleStats();
+
+        private final MultipleRuleStats finalizedModelRuleStats = new MultipleRuleStats();
 
         @Override
         public void onModelBuilt(final DataSet trainingData, final int fold,
@@ -51,17 +53,11 @@ public abstract class AbstractSingleRuleLearnerExperiment<ConfigType extends Rul
                                  final RuleSet model, final AbstractMultiLabelRuleLearner.Stats stats) {
             saveModelStatisticsToDisk(stats.getRuleStats(), "built_model_statistics_fold_" + fold,
                     trainingData.getDataSet());
-
-            if (multipleRuleStats == null) {
-                multipleRuleStats = new MultipleRuleStats();
-            }
-
-            multipleRuleStats.addRuleStats(stats.getRuleStats());
+            builtModelRuleStats.addRuleStats(stats.getRuleStats());
 
             if (fold == getConfiguration().getCrossValidationFolds()) {
-                saveMultipleModelStatisticsToDisk(multipleRuleStats, "built_model_statistics_overall",
+                saveMultipleModelStatisticsToDisk(builtModelRuleStats, "built_model_statistics_overall",
                         trainingData.getDataSet());
-                multipleRuleStats = null;
             }
         }
 
@@ -72,17 +68,11 @@ public abstract class AbstractSingleRuleLearnerExperiment<ConfigType extends Rul
             saveRulesToDisk(ruleSet, getName() + "_rules_" + fold, trainingData.getDataSet());
             saveModelStatisticsToDisk(stats.getRuleStats(), "finalized_model_statistics_fold_" + fold,
                     trainingData.getDataSet());
-
-            if (multipleRuleStats == null) {
-                multipleRuleStats = new MultipleRuleStats();
-            }
-
-            multipleRuleStats.addRuleStats(stats.getRuleStats());
+            finalizedModelRuleStats.addRuleStats(stats.getRuleStats());
 
             if (fold == getConfiguration().getCrossValidationFolds()) {
-                saveMultipleModelStatisticsToDisk(multipleRuleStats, "finalized_model_statistics_overall",
+                saveMultipleModelStatisticsToDisk(finalizedModelRuleStats, "finalized_model_statistics_overall",
                         trainingData.getDataSet());
-                multipleRuleStats = null;
             }
         }
 
