@@ -25,8 +25,8 @@ public class MainCoveringFMeasure {
 
                 private final Iterator<Double> betaIterator = IteratorUtil.INSTANCE.createConcatenatedIterator(
                         IteratorUtil.INSTANCE.createConcatenatedIterator(
-                                Arrays.asList(0.0d, 0.1d, 0.2d, 0.3d, 0.4d, 0.5d, 0.6d, 0.7d, 0.8d, 0.9d, 1.0d).iterator(),
-                                IntStream.range(0, 8).mapToDouble(i -> Math.pow(2, i)).iterator()),
+                                Arrays.asList(0.0d, 0.1d, 0.2d, 0.3d, 0.4d, 0.5d, 0.6d, 0.7d, 0.8d, 0.9d).iterator(),
+                                IntStream.range(0, 9).mapToDouble(i -> Math.pow(2, i)).iterator()),
                         Collections.singleton(Double.POSITIVE_INFINITY).iterator());
 
                 @Override
