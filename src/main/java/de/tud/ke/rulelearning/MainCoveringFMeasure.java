@@ -1,11 +1,11 @@
 package de.tud.ke.rulelearning;
 
+import de.mrapp.util.IteratorUtil;
 import de.tud.ke.rulelearning.experiments.*;
 import de.tud.ke.rulelearning.heuristics.FMeasure;
 import de.tud.ke.rulelearning.heuristics.Heuristic;
 import de.tud.ke.rulelearning.learner.AbstractRuleGenerationLearner;
 import de.tud.ke.rulelearning.learner.RandomForestRuleGenerationLearner;
-import de.tud.ke.rulelearning.util.IteratorUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -23,9 +23,10 @@ public class MainCoveringFMeasure {
         public Iterator<Heuristic> iterator() {
             return new Iterator<Heuristic>() {
 
-                private final Iterator<Double> betaIterator = IteratorUtil.concatIterators(IteratorUtil.concatIterators(
-                        Arrays.asList(0.0d, 0.1d, 0.2d, 0.3d, 0.4d, 0.5d, 0.6d, 0.7d, 0.8d, 0.9d, 1.0d).iterator(),
-                        IntStream.range(0, 8).mapToDouble(i -> Math.pow(2, i)).iterator()),
+                private final Iterator<Double> betaIterator = IteratorUtil.INSTANCE.createConcatenatedIterator(
+                        IteratorUtil.INSTANCE.createConcatenatedIterator(
+                                Arrays.asList(0.0d, 0.1d, 0.2d, 0.3d, 0.4d, 0.5d, 0.6d, 0.7d, 0.8d, 0.9d, 1.0d).iterator(),
+                                IntStream.range(0, 8).mapToDouble(i -> Math.pow(2, i)).iterator()),
                         Collections.singleton(Double.POSITIVE_INFINITY).iterator());
 
                 @Override

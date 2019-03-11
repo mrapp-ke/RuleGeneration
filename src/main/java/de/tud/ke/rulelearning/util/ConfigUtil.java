@@ -1,12 +1,8 @@
 package de.tud.ke.rulelearning.util;
 
+import de.mrapp.util.TextUtil;
 import weka.core.Utils;
 
-/**
- * Provides utility methods for handling the configurations of multi-label experiments.
- *
- * @author Michael Rapp <mrapp@ke.tu-darmstadt.de>
- */
 public final class ConfigUtil {
 
     private ConfigUtil() {
@@ -16,7 +12,7 @@ public final class ConfigUtil {
     public static String getMandatoryArgument(final String argumentName, final String[] arguments) {
         String value = getOptionalArgument(argumentName, arguments);
 
-        if (TextUtil.isEmpty(value)) {
+        if (TextUtil.INSTANCE.isEmpty(value)) {
             throw new IllegalArgumentException("Missing mandatory argument \"" + argumentName + "\"");
         }
 

@@ -1,11 +1,11 @@
 package de.tud.ke.rulelearning;
 
+import de.mrapp.util.IteratorUtil;
 import de.tud.ke.rulelearning.experiments.*;
 import de.tud.ke.rulelearning.heuristics.Heuristic;
 import de.tud.ke.rulelearning.heuristics.MEstimate;
 import de.tud.ke.rulelearning.learner.AbstractRuleGenerationLearner;
 import de.tud.ke.rulelearning.learner.RandomForestRuleGenerationLearner;
-import de.tud.ke.rulelearning.util.IteratorUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -22,9 +22,10 @@ public class MainCoveringMEstimate {
         public Iterator<Heuristic> iterator() {
             return new Iterator<Heuristic>() {
 
-                private final Iterator<Double> mIterator = IteratorUtil.concatIterators(IteratorUtil.concatIterators(
-                        Collections.singleton(0d).iterator(),
-                        IntStream.range(0, 18).mapToDouble(i -> Math.pow(2, i)).iterator()),
+                private final Iterator<Double> mIterator = IteratorUtil.INSTANCE.createConcatenatedIterator(
+                        IteratorUtil.INSTANCE.createConcatenatedIterator(
+                                Collections.singleton(0d).iterator(),
+                                IntStream.range(0, 18).mapToDouble(i -> Math.pow(2, i)).iterator()),
                         Collections.singleton(Double.POSITIVE_INFINITY).iterator());
 
                 @Override

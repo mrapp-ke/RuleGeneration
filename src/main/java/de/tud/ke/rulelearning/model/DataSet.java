@@ -30,10 +30,9 @@ public class DataSet implements Iterable<Instance>, Serializable {
         Map<Integer, Map<String, Map<Integer, TrainingInstance>>> result = new HashMap<>(
                 featureAttributes.size() + labelAttributes.size(), 1f);
 
-        for (Attribute attribute : IteratorUtil.concatIterables(featureAttributes, labelAttributes)) {
+        for (Attribute attribute : de.mrapp.util.IteratorUtil.INSTANCE.createConcatenatedIterable(featureAttributes, labelAttributes)) {
             if (attribute.isNominal()) {
-                for (String value : IteratorUtil
-                        .createForLoopIterable(attribute, Attribute::numValues, Attribute::value)) {
+                for (String value : IteratorUtil.createForLoopIterable(attribute, Attribute::numValues, Attribute::value)) {
                     int index = attribute.index();
                     Map<Integer, TrainingInstance> filteredInstances = new HashMap<>();
 

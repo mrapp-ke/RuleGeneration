@@ -1,10 +1,10 @@
 package de.tud.ke.rulelearning.experiments;
 
+import de.mrapp.util.TextUtil;
 import de.tud.ke.rulelearning.heuristics.Heuristic;
 import de.tud.ke.rulelearning.learner.AbstractMultiLabelRuleLearner;
 import de.tud.ke.rulelearning.learner.AbstractRuleGenerationLearner;
 import de.tud.ke.rulelearning.learner.covering.Covering;
-import de.tud.ke.rulelearning.util.TextUtil;
 
 import java.util.function.BiFunction;
 
@@ -18,7 +18,7 @@ public class RuleGenerationExperiment extends AbstractSingleRuleLearnerExperimen
         String arffFileName = getConfiguration().getArffFilePath().getFileName().toString();
         String dataSetName = arffFileName.toLowerCase().endsWith(".arff") ? arffFileName
                 .substring(0, arffFileName.length() - ".arff".length()) : arffFileName;
-        return dataSetName + (TextUtil.isNotEmpty(approachName) ? "_" + approachName : "");
+        return dataSetName + (TextUtil.INSTANCE.isNotEmpty(approachName) ? "_" + approachName : "");
     }
 
     public RuleGenerationExperiment(
