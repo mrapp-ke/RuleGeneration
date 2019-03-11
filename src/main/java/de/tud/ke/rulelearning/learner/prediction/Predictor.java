@@ -7,7 +7,7 @@ import weka.core.Instance;
 
 public interface Predictor<ModelType> {
 
-    public MultiLabelOutput makePrediction(DataSet trainingDataSet, ModelType model,
-                                           Instance instance, LabelStats labelStats);
+    MultiLabelOutput makePrediction(DataSet trainingDataSet, ModelType model,
+                                    Instance instance, LabelStats labelStats);
 
 }
