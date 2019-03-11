@@ -20,7 +20,7 @@ public class MEstimate extends Heuristic {
         if (m == 0) {
             return new Precision().evaluateConfusionMatrix(confusionMatrix);
         } else if (m == Double.POSITIVE_INFINITY) {
-            return new Accuracy().evaluateConfusionMatrix(confusionMatrix);
+            return new WRA().evaluateConfusionMatrix(confusionMatrix);
         } else {
             return (confusionMatrix.getNumberOfTruePositives() + this.m * confusionMatrix.getNumberOfPositives() /
                     confusionMatrix.getNumberOfExamples()) / (confusionMatrix.getNumberOfPredictedPositive() + this.m);

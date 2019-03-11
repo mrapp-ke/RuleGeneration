@@ -15,6 +15,8 @@ public final class HeuristicFactory {
                     return new Recall();
                 case "accuracy":
                     return new Accuracy();
+                case "wra":
+                    return new WRA();
                 default:
                     if (name.startsWith("f") && name.endsWith("measure")) {
                         double beta = Double.valueOf(name.substring("f".length(), name.length() - "measure".length()));
