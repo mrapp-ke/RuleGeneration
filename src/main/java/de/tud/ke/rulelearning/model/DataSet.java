@@ -92,8 +92,8 @@ public class DataSet implements Iterable<Instance>, Serializable {
     }
 
     private Map<Integer, TrainingInstance> getInstancesByNumericAttribute(final Attribute attribute,
-                                                                         final NumericCondition.Comparator comparator,
-                                                                         final double value) {
+                                                                          final NumericCondition.Comparator comparator,
+                                                                          final double value) {
         Instances sortedInstances = getInstancesSortedByNumericAttribute(attribute);
         List<Double> mappedInstances = new MappedList<>(sortedInstances, instance -> instance.value(attribute));
         int index = Collections.binarySearch(mappedInstances, value, Double::compare);
@@ -123,6 +123,43 @@ public class DataSet implements Iterable<Instance>, Serializable {
                 .collect(HashMap::new, (map, instance) -> map.put(instance.getIndex(), instance), HashMap::putAll);
     }
 
+    private boolean isLabel(final int index) {
+        return labelIndices.contains(index);
+    }
+
+    private Map<Integer, TrainingInstance> getInstancesByNominalAttribute(final Attribute attribute, final String value,
+                                                                          final AttributeType attributeType) {
+        if (!attribute.isNominal()) {
+            throw new IllegalArgumentException("Attribute must be nominal");
+        }
+
+        return getInstancesByNominalAttribute(attribute.index(), value, attributeType);
+    }
+
+    private Map<Integer, TrainingInstance> getInstancesByNominalAttribute(final int index, final String value,
+                                                                          final AttributeType attributeType) {
+        if (attributeType == AttributeType.ALL ||
+                (attributeType == AttributeType.FEATURE && !isLabel(index)) ||
+                (attributeType == AttributeType.LABEL && isLabel(index))) {
+            Map<String, Map<Integer, TrainingInstance>> map = instancesIndexedByNominalAttributes.get(index);
+            return map != null ? map.get(value) : null;
+        }
+
+        return null;
+    }
+
+    private Instances getInstancesSortedByNumericAttribute(final Attribute attribute) {
+        if (!attribute.isNumeric()) {
+            throw new IllegalArgumentException("Attribute must be numeric");
+        }
+
+        return getInstancesSortedByNumericAttribute(attribute.index());
+    }
+
+    private Instances getInstancesSortedByNumericAttribute(final int index) {
+        return instancesSortedByNumericAttributes.get(index);
+    }
+
     public DataSet(final MultiLabelInstances dataSet) {
         this.dataSet = dataSet;
         Collection<Attribute> featureAttributes = dataSet.getFeatureAttributes();
@@ -142,14 +179,6 @@ public class DataSet implements Iterable<Instance>, Serializable {
         return labelIndices;
     }
 
-    public boolean isLabel(final Attribute attribute) {
-        return isLabel(attribute.index());
-    }
-
-    public boolean isLabel(final int index) {
-        return labelIndices.contains(index);
-    }
-
     public GroundTruth getGroundTruth(final Instance instance) {
         int[] labelIndices = dataSet.getLabelIndices();
         boolean[] trueLabels = new boolean[labelIndices.length];
@@ -163,54 +192,6 @@ public class DataSet implements Iterable<Instance>, Serializable {
 
     public boolean getLabelValue(final Instance instance, final int labelIndex) {
         return instance.stringValue(labelIndex).equals("1");
-    }
-
-    public Map<Integer, TrainingInstance> getInstancesByNominalAttribute(final Attribute attribute, final String value,
-                                                                         final AttributeType attributeType) {
-        if (!attribute.isNominal()) {
-            throw new IllegalArgumentException("Attribute must be nominal");
-        }
-
-        return getInstancesByNominalAttribute(attribute.index(), value, attributeType);
-    }
-
-    public Map<Integer, TrainingInstance> getInstancesByNominalAttribute(final int index, final String value,
-                                                                         final AttributeType attributeType) {
-        if (attributeType == AttributeType.ALL ||
-                (attributeType == AttributeType.FEATURE && !isLabel(index)) ||
-                (attributeType == AttributeType.LABEL && isLabel(index))) {
-            Map<String, Map<Integer, TrainingInstance>> map = instancesIndexedByNominalAttributes.get(index);
-            return map != null ? map.get(value) : null;
-        }
-
-        return null;
-    }
-
-    public boolean hasInstancesWithNominalAttribute(final Attribute attribute, final String value,
-                                                    final AttributeType attributeType) {
-        if (!attribute.isNominal()) {
-            throw new IllegalArgumentException("Attribute must be nominal");
-        }
-
-        return hasInstancesWithNominalAttribute(attribute.index(), value, attributeType);
-    }
-
-    public boolean hasInstancesWithNominalAttribute(final int index, final String value,
-                                                    final AttributeType attributeType) {
-        Map<Integer, TrainingInstance> instances = getInstancesByNominalAttribute(index, value, attributeType);
-        return instances != null && !instances.isEmpty();
-    }
-
-    public Instances getInstancesSortedByNumericAttribute(final Attribute attribute) {
-        if (!attribute.isNumeric()) {
-            throw new IllegalArgumentException("Attribute must be numeric");
-        }
-
-        return getInstancesSortedByNumericAttribute(attribute.index());
-    }
-
-    public Instances getInstancesSortedByNumericAttribute(final int index) {
-        return instancesSortedByNumericAttributes.get(index);
     }
 
     public boolean getTargetPrediction(final int labelIndex) {
