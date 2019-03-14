@@ -18,15 +18,14 @@ public class LabelWiseCovering implements Covering {
 
     private final StoppingCriterion stoppingCriterion;
 
-    private RuleSet coverLabelWise(final RuleSet ruleSet, final DataSet trainingDataSet,
-                                   final int labelIndex, final LabelStats labelStats, final Heuristic heuristic,
-                                   final boolean targetPrediction) throws InvalidDataFormatException {
+    private void coverLabelWise(final RuleSet allRules, final RuleSet ruleSet, final DataSet trainingDataSet,
+                                final int labelIndex, final LabelStats labelStats, final Heuristic heuristic,
+                                final boolean targetPrediction) throws InvalidDataFormatException {
         MultiLabelInstances instances = new MultiLabelInstances(
                 new Instances(trainingDataSet.getDataSet().getDataSet()),
                 trainingDataSet.getDataSet().getLabelsMetaData());
         int uncoveredCount = targetPrediction ? labelStats.getP(labelIndex) : labelStats.getN(labelIndex);
-        RuleSet rules = getRulesByLabelIndex(ruleSet, labelIndex, targetPrediction);
-        RuleSet result = new RuleSet();
+        RuleSet rules = getRulesByLabelIndex(allRules, labelIndex, targetPrediction);
 
         while (uncoveredCount > 0) {
             LOG.info("{} uncovered labels remaining...", uncoveredCount);
@@ -49,13 +48,11 @@ public class LabelWiseCovering implements Covering {
                     }
                 }
 
-                result.add(bestRule);
+                ruleSet.add(bestRule);
             } else {
                 break;
             }
         }
-
-        return result;
     }
 
     private void revalidateRules(final RuleSet rules, final Instance coveredInstance, final int labelIndex,
@@ -144,8 +141,8 @@ public class LabelWiseCovering implements Covering {
         for (int labelIndex : trainingDataSet.getLabelIndices()) {
             LOG.info("Covering label {}...", labelIndex);
             boolean targetPrediction = trainingDataSet.getTargetPrediction(labelIndex);
-            result.addAll(coverLabelWise(ruleSet, trainingDataSet, labelIndex, labelStats, heuristic,
-                    targetPrediction));
+            coverLabelWise(ruleSet, result, trainingDataSet, labelIndex, labelStats, heuristic,
+                    targetPrediction);
         }
 
         return result;

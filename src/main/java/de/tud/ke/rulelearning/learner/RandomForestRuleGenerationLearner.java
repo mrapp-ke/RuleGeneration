@@ -34,10 +34,8 @@ public class RandomForestRuleGenerationLearner extends AbstractRuleGenerationLea
             this.head = new Head(new NominalCondition(labelAttribute, targetPrediction ? "1" : "0"));
         }
 
-        public RuleSet getRules() {
-            RuleSet rules = new RuleSet();
-            descend(rules, tree, null);
-            return rules;
+        public void extractRules(final RuleSet ruleSet) {
+            descend(ruleSet, tree, null);
         }
 
         private void descend(final RuleSet rules, final Tree tree, final Body body) {
@@ -104,8 +102,7 @@ public class RandomForestRuleGenerationLearner extends AbstractRuleGenerationLea
 
         while ((size = ruleSet.size()) < minRules) {
             LOG.info("Generating more rules. {} of {} rules generated so far...", size, minRules);
-            RuleSet newRules = generateRules(trainingDataSet, multiLabelInstances, seed);
-            ruleSet.addAll(newRules);
+            generateRules(trainingDataSet, multiLabelInstances, seed, ruleSet);
 
             if (Math.abs(ruleSet.size() - size) <= 10) {
                 LOG.info("Unable to generate more rules...");
@@ -119,11 +116,9 @@ public class RandomForestRuleGenerationLearner extends AbstractRuleGenerationLea
         return ruleSet;
     }
 
-    private RuleSet generateRules(final DataSet trainingDataSet, final MultiLabelInstances multiLabelInstances,
-                                  final int seed)
+    private void generateRules(final DataSet trainingDataSet, final MultiLabelInstances multiLabelInstances,
+                               final int seed, final RuleSet ruleSet)
             throws Exception {
-        RuleSet ruleSet = new RuleSet();
-
         for (int maxDepth = 0; maxDepth <= 5; maxDepth++) {
             LOG.trace("Building {} random trees with max depth of {}...", NUM_ITERATIONS, maxDepth);
             RandomForest learner = new RandomForest();
@@ -150,12 +145,10 @@ public class RandomForestRuleGenerationLearner extends AbstractRuleGenerationLea
                     RandomTree randomTree = (RandomTree) tree;
                     TreeParser treeParser = new TreeParser(randomTree,
                             ReflectionUtil.getDeclaredField(randomTree, "m_Tree"), labelAttribute, targetPrediction);
-                    ruleSet.addAll(treeParser.getRules());
+                    treeParser.extractRules(ruleSet);
                 }
             }
         }
-
-        return ruleSet;
     }
 
     @Override

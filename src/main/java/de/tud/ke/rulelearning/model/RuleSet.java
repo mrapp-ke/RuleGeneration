@@ -9,14 +9,10 @@ import java.util.stream.Collectors;
 
 public class RuleSet implements Collection<Rule>, Serializable {
 
-    private final List<Rule> rules = new ArrayList<>();
+    private final Set<Rule> rules = new HashSet<>();
 
     public RuleSet() {
 
-    }
-
-    public RuleSet(final Iterable<Rule> rules) {
-        rules.forEach(this::add);
     }
 
     public RuleSet getCoveringRules(final Instance instance) {
