@@ -103,6 +103,15 @@ public class Configuration implements BaseConfiguration, Serializable {
             return self();
         }
 
+        public boolean isPredictionCsvFileSaved() {
+            return configuration.isPredictionCsvFileSaved();
+        }
+
+        public T setPredictionCsvFileSaved(final boolean savePredictionCsvFile) {
+            configuration.setPredictionCsvFileSaved(savePredictionCsvFile);
+            return self();
+        }
+
     }
 
     public static class Builder extends AbstractBuilder<Builder> {
@@ -130,6 +139,8 @@ public class Configuration implements BaseConfiguration, Serializable {
     private boolean useCrossValidation;
 
     private int crossValidationFolds;
+
+    private boolean savePredictionCsvFile = false;
 
     @Override
     public Path getArffFilePath() {
@@ -202,6 +213,16 @@ public class Configuration implements BaseConfiguration, Serializable {
     }
 
     @Override
+    public boolean isPredictionCsvFileSaved() {
+        return savePredictionCsvFile;
+    }
+
+    @Override
+    public void setPredictionCsvFileSaved(final boolean savePredictionCsvFile) {
+        this.savePredictionCsvFile = savePredictionCsvFile;
+    }
+
+    @Override
     public String toString() {
         return "-arff " + arffFilePath + "\n" +
                 "-xml " + xmlLabelsDefFilePath + "\n" +
@@ -209,7 +230,8 @@ public class Configuration implements BaseConfiguration, Serializable {
                 "-output-dir " + outputDirPath + "\n" +
                 "-model-file " + modelDirPath + "\n" +
                 "-cross-validation " + useCrossValidation + "\n" +
-                "-folds " + crossValidationFolds + "\n";
+                "-folds " + crossValidationFolds + "\n" +
+                "-save-prediction-csv-file " + savePredictionCsvFile + "\n";
     }
 
     @Override
@@ -223,13 +245,14 @@ public class Configuration implements BaseConfiguration, Serializable {
                 Objects.equals(outputDirPath, that.outputDirPath) &&
                 Objects.equals(modelDirPath, that.modelDirPath) &&
                 Objects.equals(useCrossValidation, that.useCrossValidation) &&
-                Objects.equals(crossValidationFolds, that.crossValidationFolds);
+                Objects.equals(crossValidationFolds, that.crossValidationFolds) &&
+                Objects.equals(savePredictionCsvFile, that.savePredictionCsvFile);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(arffFilePath, xmlLabelsDefFilePath, testArffFilePath, outputDirPath, modelDirPath,
-                useCrossValidation, crossValidationFolds);
+                useCrossValidation, crossValidationFolds, savePredictionCsvFile);
     }
 
 }

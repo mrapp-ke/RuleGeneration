@@ -32,4 +32,8 @@ public interface BaseConfiguration {
 
     void setCrossValidationFolds(int folds);
 
+    boolean isPredictionCsvFileSaved();
+
+    void setPredictionCsvFileSaved(boolean savePredictionCsvFile);
+
 }

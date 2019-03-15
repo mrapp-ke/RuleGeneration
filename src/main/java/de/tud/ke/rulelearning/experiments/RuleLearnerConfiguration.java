@@ -50,7 +50,7 @@ public class RuleLearnerConfiguration extends BaseConfigurationProxy {
     @Override
     public String toString() {
         return super.toString() +
-                "-save-rule-csv-file" + saveRuleCsvFile + "\n";
+                "-save-rule-csv-file " + saveRuleCsvFile + "\n";
     }
 
     @Override

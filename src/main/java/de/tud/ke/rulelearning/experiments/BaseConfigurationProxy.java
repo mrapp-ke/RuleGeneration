@@ -86,6 +86,16 @@ public class BaseConfigurationProxy implements BaseConfiguration {
     }
 
     @Override
+    public final boolean isPredictionCsvFileSaved() {
+        return baseConfiguration.isPredictionCsvFileSaved();
+    }
+
+    @Override
+    public final void setPredictionCsvFileSaved(final boolean savePredictionCsvFile) {
+        baseConfiguration.setPredictionCsvFileSaved(savePredictionCsvFile);
+    }
+
+    @Override
     public String toString() {
         return getBaseConfiguration().toString();
     }

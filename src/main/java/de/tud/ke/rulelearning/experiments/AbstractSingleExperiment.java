@@ -84,16 +84,18 @@ public abstract class AbstractSingleExperiment<ConfigType extends BaseConfigurat
     private void savePredictionStatisticsToDisk(final MultiplePredictionStats predictionStats,
                                                 final String outputFileName,
                                                 final MultiLabelInstances dataSet) {
-        String fileName = outputFileName.toLowerCase().endsWith(".csv") ? outputFileName : outputFileName + ".csv";
-        String outputDir = getConfiguration().getOutputDirPath().toAbsolutePath().toString();
+        if (getConfiguration().isPredictionCsvFileSaved()) {
+            String fileName = outputFileName.toLowerCase().endsWith(".csv") ? outputFileName : outputFileName + ".csv";
+            String outputDir = getConfiguration().getOutputDirPath().toAbsolutePath().toString();
 
-        try (PredictionStatsCsvPrinter csvPrinter = new PredictionStatsCsvPrinter(outputDir, fileName,
-                dataSet)) {
-            for (PredictionStats stats : predictionStats) {
-                csvPrinter.print(stats);
+            try (PredictionStatsCsvPrinter csvPrinter = new PredictionStatsCsvPrinter(outputDir, fileName,
+                    dataSet)) {
+                for (PredictionStats stats : predictionStats) {
+                    csvPrinter.print(stats);
+                }
+            } catch (IOException e) {
+                LOG.error("Failed to save prediction statistics to disk", e);
             }
-        } catch (IOException e) {
-            LOG.error("Failed to save prediction statistics to disk", e);
         }
     }
 
