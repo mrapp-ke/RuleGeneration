@@ -3,7 +3,6 @@ package de.tud.ke.rulelearning.experiments;
 import de.tud.ke.rulelearning.heuristics.FMeasure;
 import de.tud.ke.rulelearning.heuristics.Heuristic;
 import de.tud.ke.rulelearning.learner.covering.Covering;
-import de.tud.ke.rulelearning.learner.covering.StoppingCriterion;
 
 import java.util.Objects;
 
@@ -18,9 +17,6 @@ public class RuleGenerationConfiguration extends RuleLearnerConfiguration {
         private Covering.Type covering = null;
 
         private Heuristic coveringHeuristic = new FMeasure();
-
-        private StoppingCriterion.Type stoppingCriterion = null;
-
 
         public Builder(final BaseConfiguration baseConfiguration) {
             super(baseConfiguration);
@@ -54,18 +50,9 @@ public class RuleGenerationConfiguration extends RuleLearnerConfiguration {
             return this;
         }
 
-        public StoppingCriterion.Type getStoppingCriterion() {
-            return stoppingCriterion;
-        }
-
-        public Builder setStoppingCriterion(final StoppingCriterion.Type stoppingCriterion) {
-            this.stoppingCriterion = stoppingCriterion;
-            return this;
-        }
-
         public RuleGenerationConfiguration build() {
             return new RuleGenerationConfiguration(baseConfiguration, isRuleCsvFileSaved(), minRules, covering,
-                    coveringHeuristic, stoppingCriterion);
+                    coveringHeuristic);
         }
 
     }
@@ -76,17 +63,13 @@ public class RuleGenerationConfiguration extends RuleLearnerConfiguration {
 
     private final Heuristic coveringHeuristic;
 
-    private final StoppingCriterion.Type stoppingCriterion;
-
     private RuleGenerationConfiguration(final BaseConfiguration baseConfiguration, final boolean saveRuleCsvFile,
                                         final int minRules, final Covering.Type covering,
-                                        final Heuristic coveringHeuristic,
-                                        final StoppingCriterion.Type stoppingCriterion) {
+                                        final Heuristic coveringHeuristic) {
         super(baseConfiguration, saveRuleCsvFile);
         this.minRules = minRules;
         this.covering = covering;
         this.coveringHeuristic = coveringHeuristic;
-        this.stoppingCriterion = stoppingCriterion;
     }
 
     public int getMinRules() {
@@ -101,22 +84,17 @@ public class RuleGenerationConfiguration extends RuleLearnerConfiguration {
         return coveringHeuristic;
     }
 
-    public StoppingCriterion.Type getStoppingCriterion() {
-        return stoppingCriterion;
-    }
-
     @Override
     public String toString() {
         return super.toString() +
                 "-min-rules " + minRules + "\n" +
                 "-covering " + (covering != null ? covering.getValue() : null) + "\n" +
-                "-covering-heuristic " + coveringHeuristic + "\n" +
-                "-stopping-criterion " + getStoppingCriterion() + "\n";
+                "-covering-heuristic " + coveringHeuristic + "\n";
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), minRules, covering, coveringHeuristic, stoppingCriterion);
+        return Objects.hash(super.hashCode(), minRules, covering, coveringHeuristic);
     }
 
     @Override
@@ -127,8 +105,7 @@ public class RuleGenerationConfiguration extends RuleLearnerConfiguration {
         RuleGenerationConfiguration that = (RuleGenerationConfiguration) o;
         return that.minRules == minRules &&
                 covering == that.covering &&
-                Objects.equals(that.getCoveringHeuristic(), getCoveringHeuristic()) &&
-                stoppingCriterion == that.stoppingCriterion;
+                Objects.equals(that.getCoveringHeuristic(), getCoveringHeuristic());
     }
 
 }

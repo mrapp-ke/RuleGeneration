@@ -10,22 +10,23 @@ import org.slf4j.LoggerFactory;
 import weka.core.Instance;
 import weka.core.Instances;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class LabelWiseCovering implements Covering {
 
     private static final Logger LOG = LoggerFactory.getLogger(LabelWiseCovering.class);
 
     private final boolean revalidate;
 
-    private final StoppingCriterion stoppingCriterion;
-
-    private void coverLabelWise(final RuleSet allRules, final RuleSet ruleSet, final DataSet trainingDataSet,
+    private void coverLabelWise(final RuleCollection allRules, final RuleCollection result, final DataSet trainingDataSet,
                                 final int labelIndex, final LabelStats labelStats, final Heuristic heuristic,
                                 final boolean targetPrediction) throws InvalidDataFormatException {
         MultiLabelInstances instances = new MultiLabelInstances(
                 new Instances(trainingDataSet.getDataSet().getDataSet()),
                 trainingDataSet.getDataSet().getLabelsMetaData());
         int uncoveredCount = targetPrediction ? labelStats.getP(labelIndex) : labelStats.getN(labelIndex);
-        RuleSet rules = getRulesByLabelIndex(allRules, labelIndex, targetPrediction);
+        List<Rule> rules = getRulesByLabelIndex(allRules, labelIndex, targetPrediction);
 
         while (uncoveredCount > 0) {
             LOG.info("{} uncovered labels remaining...", uncoveredCount);
@@ -48,14 +49,14 @@ public class LabelWiseCovering implements Covering {
                     }
                 }
 
-                ruleSet.add(bestRule);
+                result.add(bestRule);
             } else {
                 break;
             }
         }
     }
 
-    private void revalidateRules(final RuleSet rules, final Instance coveredInstance, final int labelIndex,
+    private void revalidateRules(final List<Rule> rules, final Instance coveredInstance, final int labelIndex,
                                  final boolean targetPrediction) {
         boolean trueLabel = coveredInstance.stringValue(labelIndex).equals("1");
 
@@ -83,8 +84,8 @@ public class LabelWiseCovering implements Covering {
         }
     }
 
-    private RuleSet getRulesByLabelIndex(final RuleSet ruleSet, final int labelIndex, final boolean targetPrediction) {
-        RuleSet rules = new RuleSet();
+    private List<Rule> getRulesByLabelIndex(final RuleCollection ruleSet, final int labelIndex, final boolean targetPrediction) {
+        List<Rule> rules = new ArrayList<>();
 
         for (Rule rule : ruleSet) {
             Condition condition = rule.getHead().getCondition(labelIndex);
@@ -98,54 +99,48 @@ public class LabelWiseCovering implements Covering {
         return rules;
     }
 
-    private Rule pollBestRule(final RuleSet ruleSet, final int labelIndex, final Heuristic heuristic) {
-        Rule bestRule = null;
+    private Rule pollBestRule(final List<Rule> rules, final int labelIndex, final Heuristic heuristic) {
+        Integer bestIndex = null;
         double bestH = 0;
 
-        for (Rule rule : ruleSet) {
+        for (int i = 0; i < rules.size(); i++) {
+            Rule rule = rules.get(i);
             Head head = rule.getHead();
             ConfusionMatrix confusionMatrix = head.getLabelWiseConfusionMatrix(labelIndex);
             double h = heuristic.evaluateConfusionMatrix(confusionMatrix);
             head.setLabelWiseHeuristicValue(labelIndex, h);
+            rule.setHeuristicValue(h);
 
-            if (bestRule == null || h > bestH) {
-                bestRule = rule;
+            if (bestIndex == null || h > bestH) {
+                bestIndex = i;
                 bestH = h;
             }
         }
 
-        if (bestRule != null) {
-            ruleSet.remove(bestRule);
-
-            if (stoppingCriterion != null && stoppingCriterion.isSatisfied(bestRule, labelIndex)) {
-                LOG.info("Stopping criterion met");
-                return null;
-            }
-
-            return bestRule;
+        if (bestIndex != null) {
+            return rules.remove((int) bestIndex);
         }
 
         return null;
     }
 
-    public LabelWiseCovering(final boolean revalidate, final StoppingCriterion stoppingCriterion) {
+    public LabelWiseCovering(final boolean revalidate) {
         this.revalidate = revalidate;
-        this.stoppingCriterion = stoppingCriterion;
     }
 
     @Override
-    public RuleSet getCoveringRules(final RuleSet ruleSet, final DataSet trainingDataSet,
-                                    final LabelStats labelStats, final Heuristic heuristic) throws Exception {
-        RuleSet result = new RuleSet();
+    public DecisionList getCoveringRules(final RuleCollection rules, final DataSet trainingDataSet,
+                                         final LabelStats labelStats, final Heuristic heuristic) throws Exception {
+        DecisionList decisionList = new DecisionList();
 
         for (int labelIndex : trainingDataSet.getLabelIndices()) {
             LOG.info("Covering label {}...", labelIndex);
             boolean targetPrediction = trainingDataSet.getTargetPrediction(labelIndex);
-            coverLabelWise(ruleSet, result, trainingDataSet, labelIndex, labelStats, heuristic,
+            coverLabelWise(rules, decisionList, trainingDataSet, labelIndex, labelStats, heuristic,
                     targetPrediction);
         }
 
-        return result;
+        return decisionList;
     }
 
 }

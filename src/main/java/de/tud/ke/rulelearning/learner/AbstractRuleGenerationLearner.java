@@ -9,7 +9,7 @@ import de.tud.ke.rulelearning.learner.prediction.RuleSetPredictor;
 import de.tud.ke.rulelearning.model.DataSet;
 import de.tud.ke.rulelearning.model.MultiplePredictionStats;
 import de.tud.ke.rulelearning.model.PredictionStats;
-import de.tud.ke.rulelearning.model.RuleSet;
+import de.tud.ke.rulelearning.model.RuleCollection;
 import mulan.classifier.MultiLabelOutput;
 import mulan.evaluation.GroundTruth;
 import weka.core.Instance;
@@ -22,17 +22,16 @@ public abstract class AbstractRuleGenerationLearner extends AbstractMultiLabelRu
     }
 
     @Override
-    protected RuleSet postProcessModel(final DataSet trainingDataSet, final RuleSet model) {
+    protected RuleCollection postProcessModel(final DataSet trainingDataSet, final RuleCollection model) {
         Evaluator evaluator = new Evaluator();
         evaluator.evaluate(trainingDataSet, model);
         return model;
     }
 
     @Override
-    protected RuleSet finalizeModel(final DataSet trainingDataSet, final RuleSet model)
+    protected RuleCollection finalizeModel(final DataSet trainingDataSet, final RuleCollection model)
             throws Exception {
-        Covering covering = CoveringFactory.create(getConfiguration().getCovering(),
-                getConfiguration().getStoppingCriterion());
+        Covering covering = CoveringFactory.create(getConfiguration().getCovering());
 
         if (covering != null) {
             return covering.getCoveringRules(model, trainingDataSet, getModelStats().getLabelStats(),
@@ -43,10 +42,10 @@ public abstract class AbstractRuleGenerationLearner extends AbstractMultiLabelRu
     }
 
     @Override
-    protected PredictionStats makePrediction(final DataSet trainingDataSet, final RuleSet model,
+    protected PredictionStats makePrediction(final DataSet trainingDataSet, final RuleCollection model,
                                              final Instance instance) {
-        RuleSet coveringRules = model.getCoveringRules(instance);
-        Predictor<RuleSet> predictor = new RuleSetPredictor();
+        RuleCollection coveringRules = model.getCoveringRules(instance);
+        Predictor<RuleCollection> predictor = new RuleSetPredictor();
         MultiLabelOutput multiLabelOutput = predictor.makePrediction(trainingDataSet, coveringRules, instance,
                 getModelStats().getLabelStats());
         GroundTruth groundTruth = trainingDataSet.getGroundTruth(instance);

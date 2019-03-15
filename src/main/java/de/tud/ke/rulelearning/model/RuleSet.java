@@ -3,11 +3,10 @@ package de.tud.ke.rulelearning.model;
 import org.jetbrains.annotations.NotNull;
 import weka.core.Instance;
 
-import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class RuleSet implements Collection<Rule>, Serializable {
+public class RuleSet implements RuleCollection {
 
     private final Set<Rule> rules = new HashSet<>();
 
@@ -15,6 +14,7 @@ public class RuleSet implements Collection<Rule>, Serializable {
 
     }
 
+    @Override
     public RuleSet getCoveringRules(final Instance instance) {
         return rules.stream().filter(rule -> rule.covers(instance)).collect(Collectors.toCollection(RuleSet::new));
     }

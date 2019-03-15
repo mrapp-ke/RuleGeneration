@@ -1,9 +1,10 @@
 package de.tud.ke.rulelearning.learner.covering;
 
 import de.tud.ke.rulelearning.heuristics.Heuristic;
-import de.tud.ke.rulelearning.model.LabelStats;
 import de.tud.ke.rulelearning.model.DataSet;
-import de.tud.ke.rulelearning.model.RuleSet;
+import de.tud.ke.rulelearning.model.DecisionList;
+import de.tud.ke.rulelearning.model.LabelStats;
+import de.tud.ke.rulelearning.model.RuleCollection;
 
 public interface Covering {
 
@@ -35,7 +36,7 @@ public interface Covering {
 
     }
 
-    RuleSet getCoveringRules(RuleSet ruleSet, DataSet trainingDataSet, LabelStats labelStats,
-                             Heuristic heuristic) throws Exception;
+    DecisionList getCoveringRules(RuleCollection rules, DataSet trainingDataSet, LabelStats labelStats,
+                                  Heuristic heuristic) throws Exception;
 
 }

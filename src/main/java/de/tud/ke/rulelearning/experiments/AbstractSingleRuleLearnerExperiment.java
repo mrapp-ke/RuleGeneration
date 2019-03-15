@@ -18,22 +18,22 @@ import java.io.IOException;
  * @author Michael Rapp <mrapp@ke.tu-darmstadt.de>
  */
 public abstract class AbstractSingleRuleLearnerExperiment<ConfigType extends RuleLearnerConfiguration> extends
-        AbstractSingleExperiment<ConfigType, RuleSet, AbstractMultiLabelRuleLearner.Stats, AbstractMultiLabelRuleLearner<ConfigType>> {
+        AbstractSingleExperiment<ConfigType, RuleCollection, AbstractMultiLabelRuleLearner.Stats, AbstractMultiLabelRuleLearner<ConfigType>> {
 
     private class LearnerCallback implements
-            AbstractMultiLabelRuleLearner.Callback<RuleSet, AbstractMultiLabelRuleLearner.Stats> {
+            AbstractMultiLabelRuleLearner.Callback<RuleCollection, AbstractMultiLabelRuleLearner.Stats> {
 
         @Override
         public void onModelBuilt(final DataSet trainingData, final int fold,
-                                 final AbstractMultiLabelLearner<?, RuleSet, AbstractMultiLabelRuleLearner.Stats> learner,
-                                 final RuleSet model, final AbstractMultiLabelRuleLearner.Stats stats) {
+                                 final AbstractMultiLabelLearner<?, RuleCollection, AbstractMultiLabelRuleLearner.Stats> learner,
+                                 final RuleCollection model, final AbstractMultiLabelRuleLearner.Stats stats) {
             saveModelStatisticsToDisk(stats.getRuleStats(), "built_model_statistics", trainingData.getDataSet());
         }
 
         @Override
         public void onModelFinalized(final DataSet trainingData, final int fold,
-                                     final AbstractMultiLabelLearner<?, RuleSet, AbstractMultiLabelRuleLearner.Stats> learner,
-                                     final RuleSet ruleSet, final AbstractMultiLabelRuleLearner.Stats stats) {
+                                     final AbstractMultiLabelLearner<?, RuleCollection, AbstractMultiLabelRuleLearner.Stats> learner,
+                                     final RuleCollection ruleSet, final AbstractMultiLabelRuleLearner.Stats stats) {
             saveRulesToDisk(ruleSet, getName() + "_rules", trainingData.getDataSet());
             saveModelStatisticsToDisk(stats.getRuleStats(), "finalized_model_statistics", trainingData.getDataSet());
         }
@@ -41,7 +41,7 @@ public abstract class AbstractSingleRuleLearnerExperiment<ConfigType extends Rul
     }
 
     private class LearnerCrossValidationCallback implements
-            AbstractMultiLabelRuleLearner.Callback<RuleSet, AbstractMultiLabelRuleLearner.Stats> {
+            AbstractMultiLabelRuleLearner.Callback<RuleCollection, AbstractMultiLabelRuleLearner.Stats> {
 
         private final MultipleRuleStats builtModelRuleStats = new MultipleRuleStats();
 
@@ -49,8 +49,8 @@ public abstract class AbstractSingleRuleLearnerExperiment<ConfigType extends Rul
 
         @Override
         public void onModelBuilt(final DataSet trainingData, final int fold,
-                                 final AbstractMultiLabelLearner<?, RuleSet, AbstractMultiLabelRuleLearner.Stats> learner,
-                                 final RuleSet model, final AbstractMultiLabelRuleLearner.Stats stats) {
+                                 final AbstractMultiLabelLearner<?, RuleCollection, AbstractMultiLabelRuleLearner.Stats> learner,
+                                 final RuleCollection model, final AbstractMultiLabelRuleLearner.Stats stats) {
             saveModelStatisticsToDisk(stats.getRuleStats(), "built_model_statistics_fold_" + fold,
                     trainingData.getDataSet());
             builtModelRuleStats.addRuleStats(stats.getRuleStats());
@@ -63,8 +63,8 @@ public abstract class AbstractSingleRuleLearnerExperiment<ConfigType extends Rul
 
         @Override
         public void onModelFinalized(final DataSet trainingData, final int fold,
-                                     final AbstractMultiLabelLearner<?, RuleSet, AbstractMultiLabelRuleLearner.Stats> learner,
-                                     final RuleSet ruleSet, final AbstractMultiLabelRuleLearner.Stats stats) {
+                                     final AbstractMultiLabelLearner<?, RuleCollection, AbstractMultiLabelRuleLearner.Stats> learner,
+                                     final RuleCollection ruleSet, final AbstractMultiLabelRuleLearner.Stats stats) {
             saveRulesToDisk(ruleSet, getName() + "_rules_" + fold, trainingData.getDataSet());
             saveModelStatisticsToDisk(stats.getRuleStats(), "finalized_model_statistics_fold_" + fold,
                     trainingData.getDataSet());
@@ -141,12 +141,12 @@ public abstract class AbstractSingleRuleLearnerExperiment<ConfigType extends Rul
     }
 
     @Override
-    protected AbstractMultiLabelLearner.Callback<RuleSet, AbstractMultiLabelRuleLearner.Stats> createLearnerCallback() {
+    protected AbstractMultiLabelLearner.Callback<RuleCollection, AbstractMultiLabelRuleLearner.Stats> createLearnerCallback() {
         return new LearnerCallback();
     }
 
     @Override
-    protected AbstractMultiLabelLearner.Callback<RuleSet, AbstractMultiLabelRuleLearner.Stats> createCrossValidationCallback() {
+    protected AbstractMultiLabelLearner.Callback<RuleCollection, AbstractMultiLabelRuleLearner.Stats> createCrossValidationCallback() {
         return new LearnerCrossValidationCallback();
     }
 

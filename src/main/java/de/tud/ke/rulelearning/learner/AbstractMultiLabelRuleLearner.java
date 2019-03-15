@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractMultiLabelRuleLearner<ConfigType extends BaseConfiguration> extends
-        AbstractSerializableMultiLabelLearner<ConfigType, RuleSet, AbstractMultiLabelRuleLearner.Stats> {
+        AbstractSerializableMultiLabelLearner<ConfigType, RuleCollection, AbstractMultiLabelRuleLearner.Stats> {
 
     public static class Stats {
 
@@ -37,7 +37,7 @@ public abstract class AbstractMultiLabelRuleLearner<ConfigType extends BaseConfi
     }
 
     @Override
-    protected Stats createModelStats(final DataSet trainingDataSet, final RuleSet model) {
+    protected Stats createModelStats(final DataSet trainingDataSet, final RuleCollection model) {
         RuleStats ruleStats = new RuleStats(trainingDataSet, model);
         LabelStats labelStats = new LabelStats(trainingDataSet);
         labelStats.addRules(model);

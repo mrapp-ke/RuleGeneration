@@ -4,10 +4,10 @@ import de.tud.ke.rulelearning.model.*;
 import mulan.classifier.MultiLabelOutput;
 import weka.core.Instance;
 
-public class RuleSetPredictor implements Predictor<RuleSet> {
+public class RuleSetPredictor implements Predictor<RuleCollection> {
 
     @Override
-    public MultiLabelOutput makePrediction(final DataSet trainingDataSet, final RuleSet model,
+    public MultiLabelOutput makePrediction(final DataSet trainingDataSet, final RuleCollection model,
                                            final Instance instance, final LabelStats labelStats) {
         int[] labelIndices = trainingDataSet.getDataSet().getLabelIndices();
         boolean[] bipartition = new boolean[labelIndices.length];
