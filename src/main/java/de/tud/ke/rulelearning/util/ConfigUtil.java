@@ -44,4 +44,9 @@ public final class ConfigUtil {
         return value != null ? Integer.valueOf(value) : defaultValue;
     }
 
+    public static double getDoubleArgument(final String argumentName, final String[] arguments, final double defaultValue) {
+        String value = getOptionalArgument(argumentName, arguments);
+        return value != null ? Double.valueOf(value) : defaultValue;
+    }
+
 }

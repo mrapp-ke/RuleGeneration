@@ -16,7 +16,7 @@ import java.util.stream.IntStream;
 
 public class MainCoveringFMeasure {
 
-    private static class HeuristicIterable implements Iterable<Heuristic> {
+    public static class HeuristicIterable implements Iterable<Heuristic> {
 
         @NotNull
         @Override
