@@ -1,6 +1,5 @@
 package de.tud.ke.rulelearning.model;
 
-import de.mrapp.util.datastructure.SortedArrayList;
 import org.jetbrains.annotations.NotNull;
 import weka.core.Instance;
 
