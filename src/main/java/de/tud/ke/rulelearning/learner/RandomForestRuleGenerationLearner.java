@@ -97,7 +97,7 @@ public class RandomForestRuleGenerationLearner extends AbstractRuleGenerationLea
         MultiLabelInstances multiLabelInstances = trainingDataSet.getDataSet();
         RuleSet ruleSet = new RuleSet();
         int minRules = getConfiguration().getMinRules();
-        int seed = 1;
+        int seed = 0;
         int size;
 
         while ((size = ruleSet.size()) < minRules) {
@@ -116,16 +116,18 @@ public class RandomForestRuleGenerationLearner extends AbstractRuleGenerationLea
         return ruleSet;
     }
 
-    private void generateRules(final DataSet trainingDataSet, final MultiLabelInstances multiLabelInstances,
-                               final int seed, final RuleSet ruleSet)
-            throws Exception {
-        for (int maxDepth = 0; maxDepth <= 5; maxDepth++) {
+    private int generateRules(final DataSet trainingDataSet, final MultiLabelInstances multiLabelInstances,
+                              final int seed, final RuleSet ruleSet) throws Exception {
+        int currentSeed = seed;
+
+        for (int maxDepth = 1; maxDepth <= 10; maxDepth++) {
+            currentSeed++;
             LOG.trace("Building {} random trees with max depth of {}...", NUM_ITERATIONS, maxDepth);
             RandomForest learner = new RandomForest();
             learner.setNumExecutionSlots(Runtime.getRuntime().availableProcessors());
             learner.setMaxDepth(maxDepth);
             learner.setNumIterations(NUM_ITERATIONS);
-            learner.setSeed(seed);
+            learner.setSeed(currentSeed);
             BinaryRelevance model = new BinaryRelevance(learner);
             model.build(multiLabelInstances);
 
@@ -149,6 +151,8 @@ public class RandomForestRuleGenerationLearner extends AbstractRuleGenerationLea
                 }
             }
         }
+
+        return currentSeed;
     }
 
     @Override

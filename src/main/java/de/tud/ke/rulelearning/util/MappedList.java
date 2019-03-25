@@ -2,9 +2,10 @@ package de.tud.ke.rulelearning.util;
 
 import java.util.AbstractList;
 import java.util.List;
+import java.util.RandomAccess;
 import java.util.function.Function;
 
-public class MappedList<T1, T2> extends AbstractList<T2> {
+public class MappedList<T1, T2> extends AbstractList<T2> implements RandomAccess {
 
     private final List<T1> list;
 
