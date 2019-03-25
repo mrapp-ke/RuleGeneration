@@ -65,11 +65,16 @@ public class StoppingCriterionLearner extends AbstractMultiLabelRuleLearner<Stop
 
 
             int numRules = (int) Math.round(rules.size() * threshold);
+            Rule lastRule = rules.get(numRules - 1);
             double minPrecision = precision.evaluateConfusionMatrix(
-                    rules.get(numRules - 1).getConfusionMatrix());
+                    lastRule.getHead().getLabelWiseConfusionMatrix(
+                            lastRule.getHead().getConditions().iterator().next().index()));
 
             for (int i = rules.size() - 1; i >= numRules; i--) {
-                double h = precision.evaluateConfusionMatrix(rules.get(i).getConfusionMatrix());
+                Rule rule = rules.get(i);
+                Head head = rule.getHead();
+                double h = precision.evaluateConfusionMatrix(head.getLabelWiseConfusionMatrix(
+                        head.getConditions().iterator().next().index()));
 
                 if (h < minPrecision) {
                     rules.remove(i);
