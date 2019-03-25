@@ -21,10 +21,10 @@ public abstract class AbstractRuleGenerationLearner extends AbstractMultiLabelRu
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractRuleGenerationLearner.class);
 
-    private DecisionList getFinalizedRules(final DataSet trainingDataSet, final RuleCollection model,
-                                           final Covering covering) throws Exception {
+    private RuleCollection getFinalizedRules(final DataSet trainingDataSet, final RuleCollection model,
+                                             final Covering covering) throws Exception {
         Path modelDirPath = getConfiguration().getModelDirPath();
-        DecisionList finalizedModel = null;
+        RuleCollection finalizedModel = null;
         boolean loadedFromSaveFile = true;
 
         if (modelDirPath != null) {
@@ -58,7 +58,7 @@ public abstract class AbstractRuleGenerationLearner extends AbstractMultiLabelRu
         return model;
     }
 
-    private void saveFinalizedModel(final Path saveFilePath, final DecisionList model) {
+    private void saveFinalizedModel(final Path saveFilePath, final RuleCollection model) {
         String filePath = getFinalizedModelSaveFilePath(saveFilePath);
 
         try {
