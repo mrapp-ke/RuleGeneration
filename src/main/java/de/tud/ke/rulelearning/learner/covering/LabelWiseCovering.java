@@ -101,7 +101,7 @@ public class LabelWiseCovering implements Covering {
 
     private Rule pollBestRule(final List<Rule> rules, final int labelIndex, final Heuristic heuristic) {
         Integer bestIndex = null;
-        double bestH = 0;
+        Rule bestRule = null;
 
         for (int i = 0; i < rules.size(); i++) {
             Rule rule = rules.get(i);
@@ -111,9 +111,9 @@ public class LabelWiseCovering implements Covering {
             head.setLabelWiseHeuristicValue(labelIndex, h);
             rule.setHeuristicValue(h);
 
-            if (bestIndex == null || h > bestH) {
+            if (bestRule == null || rule.compareTo(bestRule) < 0) {
                 bestIndex = i;
-                bestH = h;
+                bestRule = rule;
             }
         }
 
