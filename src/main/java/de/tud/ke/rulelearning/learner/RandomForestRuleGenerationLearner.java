@@ -102,14 +102,12 @@ public class RandomForestRuleGenerationLearner extends AbstractRuleGenerationLea
 
         while ((size = ruleSet.size()) < minRules) {
             LOG.info("Generating more rules. {} of {} rules generated so far...", size, minRules);
-            generateRules(trainingDataSet, multiLabelInstances, seed, ruleSet);
+            seed = generateRules(trainingDataSet, multiLabelInstances, seed, ruleSet);
 
             if (Math.abs(ruleSet.size() - size) <= 10) {
                 LOG.info("Unable to generate more rules...");
                 break;
             }
-
-            seed++;
         }
 
         LOG.info("{} rules generated", ruleSet.size());
@@ -120,7 +118,7 @@ public class RandomForestRuleGenerationLearner extends AbstractRuleGenerationLea
                               final int seed, final RuleSet ruleSet) throws Exception {
         int currentSeed = seed;
 
-        for (int maxDepth = 1; maxDepth <= 10; maxDepth++) {
+        for (int maxDepth = 0; maxDepth <= 8; maxDepth++) {
             currentSeed++;
             LOG.trace("Building {} random trees with max depth of {}...", NUM_ITERATIONS, maxDepth);
             RandomForest learner = new RandomForest();
