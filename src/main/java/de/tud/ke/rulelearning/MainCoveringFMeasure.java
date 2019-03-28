@@ -66,13 +66,12 @@ public class MainCoveringFMeasure {
                 RandomForestRuleGenerationLearner::new;
 
         for (Heuristic heuristic : new HeuristicIterable()) {
-            System.out.println(((FMeasure) heuristic).getBeta());
             configurationBuilder.setCoveringHeuristic(heuristic);
             batchExperiment.addExperiment(sharedData -> new RuleGenerationExperiment(sharedData,
                     configurationBuilder.build(), learnerFactory, ""));
         }
 
-        //batchExperiment.run();
+        batchExperiment.run();
     }
 
 }
