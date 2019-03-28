@@ -8,26 +8,33 @@ import de.tud.ke.rulelearning.learner.AbstractRuleGenerationLearner;
 import de.tud.ke.rulelearning.learner.RandomForestRuleGenerationLearner;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.function.BiFunction;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class MainCoveringFMeasure {
 
-    private static class HeuristicIterable implements Iterable<Heuristic> {
+    public static class HeuristicIterable implements Iterable<Heuristic> {
 
         @NotNull
         @Override
         public Iterator<Heuristic> iterator() {
             return new Iterator<Heuristic>() {
 
-                private final Iterator<Double> betaIterator = IteratorUtil.INSTANCE.createConcatenatedIterator(
+                private final Iterator<Double> betaIterator =
                         IteratorUtil.INSTANCE.createConcatenatedIterator(
-                                Arrays.asList(0.0d, 0.1d, 0.2d, 0.3d, 0.4d, 0.5d, 0.6d, 0.7d, 0.8d, 0.9d).iterator(),
-                                IntStream.range(0, 9).mapToDouble(i -> Math.pow(2, i)).iterator()),
-                        Collections.singleton(Double.POSITIVE_INFINITY).iterator());
+                                Collections.singleton(0d).iterator(),
+                                IteratorUtil.INSTANCE.createConcatenatedIterator(
+                                        Stream.of(3d, 2.5d, 2d, 1.5d, 1d, 0.5d, 0d).map(i -> 1d - Math.pow(2, i) / 10d).iterator(),
+                                        IteratorUtil.INSTANCE.createConcatenatedIterator(
+                                                IntStream.range(0, 11).mapToDouble(i -> Math.pow(2, i)).iterator(),
+                                                Collections.singleton(Double.POSITIVE_INFINITY).iterator()
+                                        )
+                                )
+                        );
 
                 @Override
                 public boolean hasNext() {
@@ -37,6 +44,11 @@ public class MainCoveringFMeasure {
                 @Override
                 public Heuristic next() {
                     double beta = betaIterator.next();
+
+                    if (beta != Double.POSITIVE_INFINITY) {
+                        beta = BigDecimal.valueOf(beta).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                    }
+
                     return new FMeasure(beta);
                 }
 
@@ -54,12 +66,13 @@ public class MainCoveringFMeasure {
                 RandomForestRuleGenerationLearner::new;
 
         for (Heuristic heuristic : new HeuristicIterable()) {
+            System.out.println(((FMeasure) heuristic).getBeta());
             configurationBuilder.setCoveringHeuristic(heuristic);
             batchExperiment.addExperiment(sharedData -> new RuleGenerationExperiment(sharedData,
                     configurationBuilder.build(), learnerFactory, ""));
         }
 
-        batchExperiment.run();
+        //batchExperiment.run();
     }
 
 }
