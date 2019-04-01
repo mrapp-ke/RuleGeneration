@@ -132,18 +132,18 @@ public class LabelWiseCovering implements Covering {
     }
 
     @Override
-    public DecisionList getCoveringRules(final RuleCollection rules, final DataSet trainingDataSet,
-                                         final LabelStats labelStats, final Heuristic heuristic) throws Exception {
-        DecisionList decisionList = new DecisionList();
+    public RuleCollection getCoveringRules(final RuleCollection rules, final DataSet trainingDataSet,
+                                           final LabelStats labelStats, final Heuristic heuristic) throws Exception {
+        RuleSet ruleSet = new RuleSet();
 
         for (int labelIndex : trainingDataSet.getLabelIndices()) {
             LOG.info("Covering label {}...", labelIndex);
             boolean targetPrediction = trainingDataSet.getTargetPrediction(labelIndex);
-            coverLabelWise(rules, decisionList, trainingDataSet, labelIndex, labelStats, heuristic,
+            coverLabelWise(rules, ruleSet, trainingDataSet, labelIndex, labelStats, heuristic,
                     targetPrediction);
         }
 
-        return decisionList;
+        return ruleSet;
     }
 
 }
