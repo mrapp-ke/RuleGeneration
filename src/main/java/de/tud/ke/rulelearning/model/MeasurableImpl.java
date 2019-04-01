@@ -33,7 +33,6 @@ public class MeasurableImpl implements Measurable, Serializable {
         this.confusionMatrix = confusionMatrix;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
