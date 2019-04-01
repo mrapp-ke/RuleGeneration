@@ -16,6 +16,8 @@ public class StoppingCriterionConfiguration extends RuleLearnerConfiguration {
 
         private Heuristic coveringHeuristic = new FMeasure();
 
+        private Heuristic stoppingCriterionHeuristic = null;
+
         private double stoppingCriterionThreshold = 1;
 
         public Builder(final BaseConfiguration baseConfiguration) {
@@ -41,6 +43,15 @@ public class StoppingCriterionConfiguration extends RuleLearnerConfiguration {
             return this;
         }
 
+        public Heuristic getStoppingCriterionHeuristic() {
+            return stoppingCriterionHeuristic;
+        }
+
+        public Builder setStoppingCriterionHeuristic(final Heuristic stoppingCriterionHeuristic) {
+            this.stoppingCriterionHeuristic = stoppingCriterionHeuristic;
+            return this;
+        }
+
         public Builder setStoppingCriterionThreshold(final double stoppingCriterionThreshold) {
             this.stoppingCriterionThreshold = stoppingCriterionThreshold;
             return this;
@@ -52,7 +63,7 @@ public class StoppingCriterionConfiguration extends RuleLearnerConfiguration {
 
         public StoppingCriterionConfiguration build() {
             return new StoppingCriterionConfiguration(baseConfiguration, isRuleCsvFileSaved(),
-                    covering, coveringHeuristic, stoppingCriterionThreshold);
+                    covering, coveringHeuristic, stoppingCriterionHeuristic, stoppingCriterionThreshold);
         }
 
     }
@@ -61,15 +72,19 @@ public class StoppingCriterionConfiguration extends RuleLearnerConfiguration {
 
     private final Heuristic coveringHeuristic;
 
+    private final Heuristic stoppingCriterionHeuristic;
+
     private final double stoppingCriterionThreshold;
 
     private StoppingCriterionConfiguration(final BaseConfiguration baseConfiguration, final boolean saveRuleCsvFile,
                                            final Covering.Type covering,
                                            final Heuristic coveringHeuristic,
+                                           final Heuristic stoppingCriterionHeuristic,
                                            final double stoppingCriterionThreshold) {
         super(baseConfiguration, saveRuleCsvFile);
         this.covering = covering;
         this.coveringHeuristic = coveringHeuristic;
+        this.stoppingCriterionHeuristic = stoppingCriterionHeuristic;
         this.stoppingCriterionThreshold = stoppingCriterionThreshold;
     }
 
@@ -81,6 +96,10 @@ public class StoppingCriterionConfiguration extends RuleLearnerConfiguration {
         return coveringHeuristic;
     }
 
+    public Heuristic getStoppingCriterionHeuristic() {
+        return stoppingCriterionHeuristic;
+    }
+
     public double getStoppingCriterionThreshold() {
         return stoppingCriterionThreshold;
     }
@@ -90,12 +109,14 @@ public class StoppingCriterionConfiguration extends RuleLearnerConfiguration {
         return super.toString() +
                 "-covering " + (covering != null ? covering.getValue() : null) + "\n" +
                 "-covering-heuristic " + coveringHeuristic + "\n" +
+                "-stopping-criterion-heuristic " + stoppingCriterionHeuristic + "\n" +
                 "-stopping-criterion-threshold " + stoppingCriterionThreshold + "\n";
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), stoppingCriterionThreshold, covering, coveringHeuristic);
+        return Objects.hash(super.hashCode(), stoppingCriterionThreshold, covering,
+                coveringHeuristic, stoppingCriterionHeuristic);
     }
 
     @Override
@@ -106,7 +127,8 @@ public class StoppingCriterionConfiguration extends RuleLearnerConfiguration {
         StoppingCriterionConfiguration that = (StoppingCriterionConfiguration) o;
         return that.stoppingCriterionThreshold == stoppingCriterionThreshold &&
                 covering == that.covering &&
-                Objects.equals(that.getCoveringHeuristic(), getCoveringHeuristic());
+                Objects.equals(that.getCoveringHeuristic(), getCoveringHeuristic()) &&
+                Objects.equals(that.getStoppingCriterionHeuristic(), getStoppingCriterionHeuristic());
     }
 
 }

@@ -52,28 +52,29 @@ public class StoppingCriterionLearner extends AbstractMultiLabelRuleLearner<Stop
 
         if (threshold < 1) {
             List<Rule> rules = new ArrayList<>(finalizedModel);
-            final Heuristic precision = new Precision();
+            final Heuristic heuristic = getConfiguration().getStoppingCriterionHeuristic() != null ?
+                    getConfiguration().getStoppingCriterionHeuristic() : getConfiguration().getCoveringHeuristic();
             rules.sort(((Comparator<Rule>) (rule1, rule2) -> {
                 Condition condition1 = rule1.getHead().getConditions().iterator().next();
                 Condition condition2 = rule2.getHead().getConditions().iterator().next();
                 ConfusionMatrix confusionMatrix1 = rule1.getHead().getLabelWiseConfusionMatrix(condition1.index());
                 ConfusionMatrix confusionMatrix2 = rule2.getHead().getLabelWiseConfusionMatrix(condition2.index());
-                double h1 = precision.evaluateConfusionMatrix(confusionMatrix1);
-                double h2 = precision.evaluateConfusionMatrix(confusionMatrix2);
+                double h1 = heuristic.evaluateConfusionMatrix(confusionMatrix1);
+                double h2 = heuristic.evaluateConfusionMatrix(confusionMatrix2);
                 return Double.compare(h1, h2);
             }).reversed());
 
 
             int numRules = (int) Math.round(rules.size() * threshold);
             Rule lastRule = rules.get(numRules - 1);
-            double minPrecision = precision.evaluateConfusionMatrix(
+            double minPrecision = heuristic.evaluateConfusionMatrix(
                     lastRule.getHead().getLabelWiseConfusionMatrix(
                             lastRule.getHead().getConditions().iterator().next().index()));
 
             for (int i = rules.size() - 1; i >= numRules; i--) {
                 Rule rule = rules.get(i);
                 Head head = rule.getHead();
-                double h = precision.evaluateConfusionMatrix(head.getLabelWiseConfusionMatrix(
+                double h = heuristic.evaluateConfusionMatrix(head.getLabelWiseConfusionMatrix(
                         head.getConditions().iterator().next().index()));
 
                 if (h < minPrecision || Rule.TIE_BREAKER.compare(rule, lastRule) != 0) {

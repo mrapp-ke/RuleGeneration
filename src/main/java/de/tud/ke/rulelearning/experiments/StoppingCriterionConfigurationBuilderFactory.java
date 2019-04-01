@@ -12,8 +12,9 @@ public final class StoppingCriterionConfigurationBuilderFactory {
     }
 
     public static StoppingCriterionConfiguration.Builder create(final BaseConfiguration baseConfiguration,
-                                                             final String[] args) {
+                                                                final String[] args) {
         boolean saveRuleCsvFile = ConfigUtil.getBooleanArgument("save-rule-csv-file", args, false);
+        Heuristic stoppingCriterionHeuristic = HeuristicFactory.create(ConfigUtil.getOptionalArgument("stopping-criterion-heuristic", args));
         double threshold = ConfigUtil.getDoubleArgument("stopping-criterion-threshold", args, 1);
         String coveringType = ConfigUtil.getOptionalArgument("covering", args);
         Covering.Type covering = coveringType != null ? Covering.Type.fromValue(coveringType) : null;
@@ -21,6 +22,7 @@ public final class StoppingCriterionConfigurationBuilderFactory {
         return new StoppingCriterionConfiguration.Builder(baseConfiguration)
                 .setRuleCsvFileSaved(saveRuleCsvFile)
                 .setCovering(covering)
+                .setStoppingCriterionHeuristic(stoppingCriterionHeuristic)
                 .setCoveringHeuristic(coveringHeuristic)
                 .setStoppingCriterionThreshold(threshold);
     }
