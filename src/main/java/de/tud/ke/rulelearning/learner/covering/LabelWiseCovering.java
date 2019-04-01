@@ -11,11 +11,14 @@ import weka.core.Instance;
 import weka.core.Instances;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class LabelWiseCovering implements Covering {
 
     private static final Logger LOG = LoggerFactory.getLogger(LabelWiseCovering.class);
+
+    private final Comparator<Rule> comparator = new Measurable.Comparator<>(Rule.TIE_BREAKER);
 
     private final boolean revalidate;
 
@@ -111,7 +114,7 @@ public class LabelWiseCovering implements Covering {
             head.setLabelWiseHeuristicValue(labelIndex, h);
             rule.setHeuristicValue(h);
 
-            if (bestRule == null || rule.compareTo(bestRule) < 0) {
+            if (bestRule == null || comparator.compare(rule, bestRule) < 0) {
                 bestIndex = i;
                 bestRule = rule;
             }

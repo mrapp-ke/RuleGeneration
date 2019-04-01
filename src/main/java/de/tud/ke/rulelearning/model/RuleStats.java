@@ -2,12 +2,15 @@ package de.tud.ke.rulelearning.model;
 
 import weka.core.Instance;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RuleStats {
+public class RuleStats implements Serializable{
 
-    public static class CoveringStats {
+    public static class CoveringStats implements Serializable {
+
+        private static final long serialVersionUID = 1L;
 
         private int totalCount = 0;
 
@@ -26,6 +29,8 @@ public class RuleStats {
         }
 
     }
+
+    private static final long serialVersionUID = 1L;
 
     private final CoveringStats instanceCoveringStats = new CoveringStats();
 

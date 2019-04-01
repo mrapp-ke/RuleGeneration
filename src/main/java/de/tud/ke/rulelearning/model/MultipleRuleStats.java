@@ -1,9 +1,12 @@
 package de.tud.ke.rulelearning.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MultipleRuleStats {
+public class MultipleRuleStats implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private final List<RuleStats> ruleStats = new ArrayList<>();
 

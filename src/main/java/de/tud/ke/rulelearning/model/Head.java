@@ -7,6 +7,8 @@ import java.util.Map;
 
 public class Head extends ConditionSet {
 
+    private static final long serialVersionUID = 1L;
+
     private final Map<Integer, Measurable> labelWiseMeasurables = new HashMap<>();
 
     public Head(final Condition... conditions) {

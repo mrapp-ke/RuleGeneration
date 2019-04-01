@@ -5,6 +5,8 @@ import java.util.Objects;
 
 public class BaseConfigurationProxy implements BaseConfiguration {
 
+    private static final long serialVersionUID = 1L;
+
     private final BaseConfiguration baseConfiguration;
 
     public BaseConfigurationProxy(final BaseConfiguration baseConfiguration) {

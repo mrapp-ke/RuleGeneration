@@ -1,12 +1,15 @@
 package de.tud.ke.rulelearning.model;
 
+import org.jetbrains.annotations.NotNull;
 import weka.core.Attribute;
 import weka.core.Instance;
 
 import java.io.Serializable;
 import java.util.Objects;
 
-public abstract class Condition implements Serializable {
+public abstract class Condition implements Comparable<Condition>, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private final Attribute attribute;
 
@@ -22,6 +25,11 @@ public abstract class Condition implements Serializable {
 
     public int index() {
         return attribute.index();
+    }
+
+    @Override
+    public int compareTo(@NotNull final Condition o) {
+        return Integer.compare(index(), o.index());
     }
 
     @Override

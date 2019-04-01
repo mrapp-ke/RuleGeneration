@@ -5,14 +5,18 @@ import mulan.classifier.MultiLabelOutput;
 import mulan.evaluation.GroundTruth;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class PredictionStats implements Iterable<PredictionStats.SingleLabelPredictionStats> {
+public class PredictionStats implements Iterable<PredictionStats.SingleLabelPredictionStats>,
+        Serializable {
 
-    public class SingleLabelPredictionStats {
+    public class SingleLabelPredictionStats implements Serializable{
+
+        private static final long serialVersionUID = 1L;
 
         private final boolean relevant;
 
@@ -117,6 +121,8 @@ public class PredictionStats implements Iterable<PredictionStats.SingleLabelPred
         }
 
     }
+
+    private static final long serialVersionUID = 1L;
 
     private final MultiLabelOutput prediction;
 

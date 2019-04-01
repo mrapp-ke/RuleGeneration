@@ -7,6 +7,8 @@ import java.util.Objects;
 
 public class NominalCondition extends Condition {
 
+    private static final long serialVersionUID = 1L;
+
     private final String value;
 
     public NominalCondition(final Attribute attribute, final String value) {

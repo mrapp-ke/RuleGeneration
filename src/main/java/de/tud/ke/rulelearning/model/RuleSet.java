@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 
 public class RuleSet implements RuleCollection {
 
+    private static final long serialVersionUID = 1L;
+
     private final Set<Rule> rules = new HashSet<>();
 
     public RuleSet() {

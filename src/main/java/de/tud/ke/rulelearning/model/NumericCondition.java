@@ -29,6 +29,8 @@ public class NumericCondition extends Condition {
 
     }
 
+    private static final long serialVersionUID = 1L;
+
     private final double value;
 
     private final Comparator comparator;

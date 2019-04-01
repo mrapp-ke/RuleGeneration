@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 public class ConfusionMatrix implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private double numberOfTruePositives = 0;
 
     private double numberOfFalseNegatives = 0;

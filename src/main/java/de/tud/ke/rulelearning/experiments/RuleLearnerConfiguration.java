@@ -24,17 +24,7 @@ public class RuleLearnerConfiguration extends BaseConfigurationProxy {
 
     }
 
-    public static class Builder extends AbstractBuilder<Builder> {
-
-        public Builder(final BaseConfiguration baseConfiguration) {
-            super(baseConfiguration);
-        }
-
-        public RuleLearnerConfiguration build() {
-            return new RuleLearnerConfiguration(configuration, isRuleCsvFileSaved());
-        }
-
-    }
+    private static final long serialVersionUID = 1L;
 
     private final boolean saveRuleCsvFile;
 

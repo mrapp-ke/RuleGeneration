@@ -9,10 +9,12 @@ import java.util.stream.Collectors;
 
 public class DecisionList implements RuleCollection, List<Rule>, RandomAccess {
 
+    private static final long serialVersionUID = 1L;
+
     private final List<Rule> list;
 
     public DecisionList() {
-        list = new SortedArrayList<>(Comparator.reverseOrder());
+        list = new SortedArrayList<>(new Measurable.Comparator<>(Rule.TIE_BREAKER).reversed());
     }
 
     @Override

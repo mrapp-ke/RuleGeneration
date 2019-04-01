@@ -30,15 +30,13 @@ public class Rule implements Measurable, Comparable<Rule>, Serializable {
         return comp;
     };
 
+    private static final long serialVersionUID = 1L;
+
     private final Body body;
 
     private final Head head;
 
     private final MeasurableImpl measurable = new MeasurableImpl();
-
-    private int coverage;
-
-    private double weight = 1;
 
     public Rule() {
         this(new Body(), new Head());
@@ -55,22 +53,6 @@ public class Rule implements Measurable, Comparable<Rule>, Serializable {
 
     public Head getHead() {
         return head;
-    }
-
-    public void setCoverage(final int coverage) {
-        this.coverage = coverage;
-    }
-
-    public int getCoverage() {
-        return coverage;
-    }
-
-    public double getWeight() {
-        return weight;
-    }
-
-    public void setWeight(final double weight) {
-        this.weight = weight;
     }
 
     public boolean covers(final Instance instance) {
@@ -99,15 +81,14 @@ public class Rule implements Measurable, Comparable<Rule>, Serializable {
 
     @Override
     public int compareTo(@NotNull final Rule o) {
-        int comp = measurable.compareTo(o);
-        return comp != 0 ? comp : TIE_BREAKER.compare(this, o);
+        int comp = body.compareTo(o.getBody());
+        return comp != 0 ? comp : head.compareTo(o.getHead());
     }
 
     @Override
     public String toString() {
         return head + " <-- " + body + ", confusionMatrix = " + getConfusionMatrix() +
-                ", heuristicValue = " + getHeuristicValue() + ", coverage = " + coverage +
-                ", weight = " + weight;
+                ", heuristicValue = " + getHeuristicValue();
     }
 
     @Override
