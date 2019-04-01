@@ -14,7 +14,7 @@ public class DecisionList implements RuleCollection, List<Rule>, RandomAccess {
     private final List<Rule> list;
 
     public DecisionList() {
-        list = new SortedArrayList<>(new Measurable.Comparator<>(Rule.TIE_BREAKER).reversed());
+        list = new SortedArrayList<>(new Measurable.Comparator<>(Rule.TIE_BREAKER));
     }
 
     @Override
