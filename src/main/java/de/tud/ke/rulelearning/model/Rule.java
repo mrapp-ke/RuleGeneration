@@ -2,12 +2,13 @@ package de.tud.ke.rulelearning.model;
 
 import de.tud.ke.rulelearning.heuristics.ConfusionMatrix;
 import de.tud.ke.rulelearning.heuristics.TieBreaker;
+import org.jetbrains.annotations.NotNull;
 import weka.core.Instance;
 
 import java.io.Serializable;
 import java.util.Objects;
 
-public class Rule implements Measurable, Serializable {
+public class Rule implements Measurable, Comparable<Rule>, Serializable {
 
     public static final TieBreaker<Rule> TIE_BREAKER = (rule1, rule2) -> {
         Head head1 = rule1.getHead();
@@ -96,6 +97,12 @@ public class Rule implements Measurable, Serializable {
     @Override
     public void setConfusionMatrix(final ConfusionMatrix confusionMatrix) {
         this.measurable.setConfusionMatrix(confusionMatrix);
+    }
+
+    @Override
+    public int compareTo(@NotNull final Rule o) {
+        int comp = body.compareTo(o.getBody());
+        return comp != 0 ? comp : head.compareTo(o.getHead());
     }
 
     @Override
