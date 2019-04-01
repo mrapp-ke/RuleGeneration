@@ -35,7 +35,6 @@ public class Evaluator {
 
     public void evaluate(final DataSet dataSet, final Rule rule) {
         Map<Integer, TrainingInstance> coveredInstances = dataSet.getCoveredInstances(rule);
-        rule.setCoverage(coveredInstances.size());
         ConfusionMatrix globalConfusionMatrix = new ConfusionMatrix();
 
         for (int labelIndex : dataSet.getLabelIndices()) {
