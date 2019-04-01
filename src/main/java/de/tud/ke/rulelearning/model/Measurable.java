@@ -9,10 +9,6 @@ public interface Measurable {
 
         private final TieBreaker<T> tieBreaker;
 
-        public Comparator() {
-            this(null);
-        }
-
         public Comparator(final TieBreaker<T> tieBreaker) {
             this.tieBreaker = tieBreaker;
         }
@@ -21,8 +17,7 @@ public interface Measurable {
         public int compare(T o1, T o2) {
             double h1 = o1.getHeuristicValue();
             double h2 = o2.getHeuristicValue();
-            int comp = Double.compare(h1, h2);
-
+            int comp = Double.compare(h2, h1);
             return comp != 0 || tieBreaker == null ? comp : tieBreaker.compare(o1, o2);
         }
     }

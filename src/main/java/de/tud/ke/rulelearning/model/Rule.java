@@ -24,7 +24,7 @@ public class Rule implements Measurable, Comparable<Rule>, Serializable {
         int comp = Double.compare(tp2, tp1);
 
         if (comp == 0) {
-            comp = Integer.compare(rule2.getBody().size(), rule1.getBody().size());
+            comp = Integer.compare(rule1.getBody().size(), rule2.getBody().size());
         }
 
         return comp;
