@@ -35,7 +35,7 @@ public class StoppingCriterionLearner extends AbstractMultiLabelRuleLearner<Stop
             ConfusionMatrix confusionMatrix2 = rule2.getHead().getLabelWiseConfusionMatrix(condition2.index());
             double h1 = heuristic.evaluateConfusionMatrix(confusionMatrix1);
             double h2 = heuristic.evaluateConfusionMatrix(confusionMatrix2);
-            int comp = Double.compare(h1, h2);
+            int comp = Double.compare(h2, h1);
             return comp != 0 ? comp : Rule.TIE_BREAKER.compare(rule1, rule2);
         }
 
@@ -68,14 +68,13 @@ public class StoppingCriterionLearner extends AbstractMultiLabelRuleLearner<Stop
 
     @Override
     protected RuleCollection finalizeModel(final DataSet trainingDataSet, final RuleCollection model) {
-        DecisionList finalizedModel = (DecisionList) model;
         double threshold = getConfiguration().getStoppingCriterionThreshold();
 
         if (threshold < 1) {
-            List<Rule> rules = new ArrayList<>(finalizedModel);
+            List<Rule> rules = new ArrayList<>(model);
             final Heuristic heuristic = getConfiguration().getStoppingCriterionHeuristic() != null ?
                     getConfiguration().getStoppingCriterionHeuristic() : getConfiguration().getCoveringHeuristic();
-            final Comparator<Rule> comparator = new RuleComparator(heuristic).reversed();
+            final Comparator<Rule> comparator = new RuleComparator(heuristic);
             rules.sort(comparator);
 
             int numRules = (int) Math.round(rules.size() * threshold);
@@ -90,7 +89,7 @@ public class StoppingCriterionLearner extends AbstractMultiLabelRuleLearner<Stop
             return new RuleList(rules);
         }
 
-        return finalizedModel;
+        return model;
     }
 
     @Override
