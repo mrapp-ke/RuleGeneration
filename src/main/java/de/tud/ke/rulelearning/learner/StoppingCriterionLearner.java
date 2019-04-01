@@ -3,7 +3,6 @@ package de.tud.ke.rulelearning.learner;
 import de.tud.ke.rulelearning.experiments.StoppingCriterionConfiguration;
 import de.tud.ke.rulelearning.heuristics.ConfusionMatrix;
 import de.tud.ke.rulelearning.heuristics.Heuristic;
-import de.tud.ke.rulelearning.heuristics.Precision;
 import de.tud.ke.rulelearning.learner.prediction.Predictor;
 import de.tud.ke.rulelearning.learner.prediction.RuleSetPredictor;
 import de.tud.ke.rulelearning.model.*;
@@ -19,6 +18,28 @@ import java.util.Comparator;
 import java.util.List;
 
 public class StoppingCriterionLearner extends AbstractMultiLabelRuleLearner<StoppingCriterionConfiguration> {
+
+    private static class RuleComparator implements java.util.Comparator<Rule> {
+
+        private final Heuristic heuristic;
+
+        RuleComparator(final Heuristic heuristic) {
+            this.heuristic = heuristic;
+        }
+
+        @Override
+        public int compare(final Rule rule1, final Rule rule2) {
+            Condition condition1 = rule1.getHead().getConditions().iterator().next();
+            Condition condition2 = rule2.getHead().getConditions().iterator().next();
+            ConfusionMatrix confusionMatrix1 = rule1.getHead().getLabelWiseConfusionMatrix(condition1.index());
+            ConfusionMatrix confusionMatrix2 = rule2.getHead().getLabelWiseConfusionMatrix(condition2.index());
+            double h1 = heuristic.evaluateConfusionMatrix(confusionMatrix1);
+            double h2 = heuristic.evaluateConfusionMatrix(confusionMatrix2);
+            int comp = Double.compare(h1, h2);
+            return comp != 0 ? comp : Rule.TIE_BREAKER.compare(rule1, rule2);
+        }
+
+    }
 
     public StoppingCriterionLearner(final String name, final StoppingCriterionConfiguration configuration) {
         this(name, configuration, new MultiplePredictionStats());
@@ -54,30 +75,14 @@ public class StoppingCriterionLearner extends AbstractMultiLabelRuleLearner<Stop
             List<Rule> rules = new ArrayList<>(finalizedModel);
             final Heuristic heuristic = getConfiguration().getStoppingCriterionHeuristic() != null ?
                     getConfiguration().getStoppingCriterionHeuristic() : getConfiguration().getCoveringHeuristic();
-            rules.sort(((Comparator<Rule>) (rule1, rule2) -> {
-                Condition condition1 = rule1.getHead().getConditions().iterator().next();
-                Condition condition2 = rule2.getHead().getConditions().iterator().next();
-                ConfusionMatrix confusionMatrix1 = rule1.getHead().getLabelWiseConfusionMatrix(condition1.index());
-                ConfusionMatrix confusionMatrix2 = rule2.getHead().getLabelWiseConfusionMatrix(condition2.index());
-                double h1 = heuristic.evaluateConfusionMatrix(confusionMatrix1);
-                double h2 = heuristic.evaluateConfusionMatrix(confusionMatrix2);
-                return Double.compare(h1, h2);
-            }).reversed());
-
+            final Comparator<Rule> comparator = new RuleComparator(heuristic).reversed();
+            rules.sort(comparator);
 
             int numRules = (int) Math.round(rules.size() * threshold);
             Rule lastRule = rules.get(numRules - 1);
-            double minPrecision = heuristic.evaluateConfusionMatrix(
-                    lastRule.getHead().getLabelWiseConfusionMatrix(
-                            lastRule.getHead().getConditions().iterator().next().index()));
 
             for (int i = rules.size() - 1; i >= numRules; i--) {
-                Rule rule = rules.get(i);
-                Head head = rule.getHead();
-                double h = heuristic.evaluateConfusionMatrix(head.getLabelWiseConfusionMatrix(
-                        head.getConditions().iterator().next().index()));
-
-                if (h < minPrecision || Rule.TIE_BREAKER.compare(rule, lastRule) != 0) {
+                if (comparator.compare(rules.get(i), lastRule) != 0) {
                     rules.remove(i);
                 }
             }
