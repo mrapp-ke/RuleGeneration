@@ -7,7 +7,10 @@ import de.tud.ke.rulelearning.learner.covering.CoveringFactory;
 import de.tud.ke.rulelearning.learner.evaluation.Evaluator;
 import de.tud.ke.rulelearning.learner.prediction.Predictor;
 import de.tud.ke.rulelearning.learner.prediction.RuleSetPredictor;
-import de.tud.ke.rulelearning.model.*;
+import de.tud.ke.rulelearning.model.DataSet;
+import de.tud.ke.rulelearning.model.MultiplePredictionStats;
+import de.tud.ke.rulelearning.model.PredictionStats;
+import de.tud.ke.rulelearning.model.RuleCollection;
 import mulan.classifier.MultiLabelOutput;
 import mulan.evaluation.GroundTruth;
 import org.slf4j.Logger;
@@ -44,10 +47,10 @@ public abstract class AbstractRuleGenerationLearner extends AbstractMultiLabelRu
         return finalizedModel;
     }
 
-    private DecisionList loadFinalizedModel(final Path saveFilePath) {
+    private RuleCollection loadFinalizedModel(final Path saveFilePath) {
         String filePath = getFinalizedModelSaveFilePath(saveFilePath);
         LOG.info("Loading finalized model from file {}...", filePath);
-        DecisionList model = null;
+        RuleCollection model = null;
 
         try {
             model = loadFromFile(filePath);
