@@ -4,6 +4,8 @@ import weka.core.Instance;
 
 public class Body extends ConditionSet {
 
+    private static final long serialVersionUID = 1L;
+
     public Body(final Condition... conditions) {
         super(conditions);
     }

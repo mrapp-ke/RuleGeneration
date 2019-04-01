@@ -2,10 +2,13 @@ package de.tud.ke.rulelearning.model;
 
 import weka.core.Instance;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LabelStats {
+public class LabelStats implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private final DataSet dataSet;
 

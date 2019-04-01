@@ -29,6 +29,8 @@ public class Rule implements Measurable, Serializable {
         return comp;
     };
 
+    private static final long serialVersionUID = 1L;
+
     private final Body body;
 
     private final Head head;

@@ -16,6 +16,8 @@ import java.util.stream.IntStream;
 
 public class DataSet implements Iterable<Instance>, Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private final MultiLabelInstances dataSet;
 
     private final Map<Integer, Instances> instancesSortedByNumericAttributes;

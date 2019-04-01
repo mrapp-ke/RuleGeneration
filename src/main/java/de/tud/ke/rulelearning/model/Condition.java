@@ -8,6 +8,8 @@ import java.util.Objects;
 
 public abstract class Condition implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private final Attribute attribute;
 
     public Condition(final Attribute attribute) {

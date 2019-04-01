@@ -7,6 +7,8 @@ import java.util.Objects;
 
 public class MeasurableImpl implements Measurable, Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private double heuristicValue = 0d;
 
     private ConfusionMatrix confusionMatrix;

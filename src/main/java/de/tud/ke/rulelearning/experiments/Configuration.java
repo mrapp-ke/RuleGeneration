@@ -1,11 +1,10 @@
 package de.tud.ke.rulelearning.experiments;
 
-import java.io.Serializable;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
 
-public class Configuration implements BaseConfiguration, Serializable {
+public class Configuration implements BaseConfiguration {
 
     public static abstract class AbstractBuilder<T extends AbstractBuilder<T>> {
 
@@ -125,6 +124,8 @@ public class Configuration implements BaseConfiguration, Serializable {
         }
 
     }
+
+    private static final long serialVersionUID = 1L;
 
     private Path arffFilePath;
 

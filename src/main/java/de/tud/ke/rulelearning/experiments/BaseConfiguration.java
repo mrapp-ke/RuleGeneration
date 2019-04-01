@@ -1,8 +1,9 @@
 package de.tud.ke.rulelearning.experiments;
 
+import java.io.Serializable;
 import java.nio.file.Path;
 
-public interface BaseConfiguration {
+public interface BaseConfiguration extends Serializable {
 
     Path getArffFilePath();
 

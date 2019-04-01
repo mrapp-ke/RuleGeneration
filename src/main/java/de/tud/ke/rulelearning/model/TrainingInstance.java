@@ -10,6 +10,8 @@ import java.util.Objects;
 
 public class TrainingInstance implements Instance, Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private final int index;
 
     private final Instance instance;

@@ -5,6 +5,8 @@ import java.util.*;
 
 public abstract class ConditionSet implements Iterable<Condition>, Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private final Map<Integer, Condition> conditions = new LinkedHashMap<>();
 
     public ConditionSet(final Condition... conditions) {
