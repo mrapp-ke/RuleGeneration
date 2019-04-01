@@ -1,12 +1,11 @@
 package de.tud.ke.rulelearning.model;
 
 import de.tud.ke.rulelearning.heuristics.ConfusionMatrix;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.util.Objects;
 
-public class MeasurableImpl implements Measurable, Comparable<Measurable>, Serializable {
+public class MeasurableImpl implements Measurable, Serializable {
 
     private double heuristicValue = 0d;
 
@@ -45,11 +44,6 @@ public class MeasurableImpl implements Measurable, Comparable<Measurable>, Seria
     @Override
     public int hashCode() {
         return Objects.hash(heuristicValue, confusionMatrix);
-    }
-
-    @Override
-    public int compareTo(@NotNull final Measurable o) {
-        return Double.compare(o.getHeuristicValue(), heuristicValue);
     }
 
 }
