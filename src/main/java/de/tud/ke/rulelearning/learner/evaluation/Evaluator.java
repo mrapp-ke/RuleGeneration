@@ -2,6 +2,7 @@ package de.tud.ke.rulelearning.learner.evaluation;
 
 import de.tud.ke.rulelearning.heuristics.ConfusionMatrix;
 import de.tud.ke.rulelearning.model.DataSet;
+import de.tud.ke.rulelearning.model.Head;
 import de.tud.ke.rulelearning.model.Rule;
 import de.tud.ke.rulelearning.model.TrainingInstance;
 
@@ -34,10 +35,12 @@ public class Evaluator {
     }
 
     public void evaluate(final DataSet dataSet, final Rule rule) {
+        Head head = rule.getHead();
         Map<Integer, TrainingInstance> coveredInstances = dataSet.getCoveredInstances(rule);
         ConfusionMatrix globalConfusionMatrix = new ConfusionMatrix();
 
         for (int labelIndex : dataSet.getLabelIndices()) {
+            boolean predictsLabel = head.getCondition(labelIndex) != null;
             int positives = dataSet.getPositiveExamples(labelIndex);
             int negatives = dataSet.getDataSet().getNumInstances() - positives;
             boolean targetPrediction = negatives >= positives;
@@ -46,7 +49,7 @@ public class Evaluator {
             for (TrainingInstance trainingInstance : coveredInstances.values()) {
                 boolean trueLabel = trainingInstance.stringValue(labelIndex).equals("1");
                 aggregate(targetPrediction, trueLabel, trainingInstance.weight(), labelWiseConfusionMatrix,
-                        globalConfusionMatrix);
+                        predictsLabel ? globalConfusionMatrix : null);
             }
 
             double remainingPositives = (targetPrediction ? positives : negatives)
@@ -54,10 +57,14 @@ public class Evaluator {
             double remainingNegatives = (targetPrediction ? negatives : positives)
                     - labelWiseConfusionMatrix.getNumberOfFalsePositives();
             labelWiseConfusionMatrix.addFalseNegatives(remainingPositives);
-            globalConfusionMatrix.addFalseNegatives(remainingPositives);
             labelWiseConfusionMatrix.addTrueNegatives(remainingNegatives);
-            globalConfusionMatrix.addTrueNegatives(remainingNegatives);
-            rule.getHead().setLabelWiseConfusionMatrix(labelIndex, labelWiseConfusionMatrix);
+
+            if (predictsLabel) {
+                globalConfusionMatrix.addFalseNegatives(remainingPositives);
+                globalConfusionMatrix.addTrueNegatives(remainingNegatives);
+            }
+
+            head.setLabelWiseConfusionMatrix(labelIndex, labelWiseConfusionMatrix);
         }
 
         rule.setConfusionMatrix(globalConfusionMatrix);
