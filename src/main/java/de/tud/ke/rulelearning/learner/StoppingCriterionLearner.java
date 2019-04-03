@@ -29,10 +29,8 @@ public class StoppingCriterionLearner extends AbstractMultiLabelRuleLearner<Stop
 
         @Override
         public int compare(final Rule rule1, final Rule rule2) {
-            Condition condition1 = rule1.getHead().getConditions().iterator().next();
-            Condition condition2 = rule2.getHead().getConditions().iterator().next();
-            ConfusionMatrix confusionMatrix1 = rule1.getHead().getLabelWiseConfusionMatrix(condition1.index());
-            ConfusionMatrix confusionMatrix2 = rule2.getHead().getLabelWiseConfusionMatrix(condition2.index());
+            ConfusionMatrix confusionMatrix1 = rule1.getConfusionMatrix();
+            ConfusionMatrix confusionMatrix2 = rule2.getConfusionMatrix();
             double h1 = heuristic.evaluateConfusionMatrix(confusionMatrix1);
             double h2 = heuristic.evaluateConfusionMatrix(confusionMatrix2);
             int comp = Double.compare(h2, h1);
