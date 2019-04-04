@@ -75,7 +75,7 @@ public class StoppingCriterionLearner extends AbstractMultiLabelRuleLearner<Stop
             final Comparator<Rule> comparator = new RuleComparator(heuristic);
             rules.sort(comparator);
 
-            int numRules = (int) Math.round(rules.size() * threshold);
+            int numRules = (int) Math.ceil(rules.size() * threshold);
             Rule lastRule = rules.get(numRules - 1);
 
             for (int i = rules.size() - 1; i >= numRules; i--) {
