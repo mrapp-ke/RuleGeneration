@@ -23,10 +23,8 @@ public class MainCoveringMEstimate {
             return new Iterator<Heuristic>() {
 
                 private final Iterator<Double> mIterator = IteratorUtil.INSTANCE.createConcatenatedIterator(
-                        IteratorUtil.INSTANCE.createConcatenatedIterator(
-                                Collections.singleton(0d).iterator(),
-                                IntStream.range(0, 18).mapToDouble(i -> Math.pow(2, i)).iterator()),
-                        Collections.singleton(Double.POSITIVE_INFINITY).iterator());
+                        Collections.singleton(0d).iterator(),
+                        IntStream.range(0, 19).mapToDouble(i -> Math.pow(2, i)).iterator());
 
                 @Override
                 public boolean hasNext() {
