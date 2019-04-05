@@ -30,6 +30,7 @@ Various command line parameters must be passed to these main classes in order to
 | min-rules                | Yes       | 300000     | The number of rules to be generated at least.                                                                                                                 |
 | covering                 | Yes       | null       | The name of the covering algorithm to be used. Must be "label-wise" or "label-wise-no-revalidation".                                                          |
 | covering-heuristic       | Yes       | f1-measure | The heuristic to be used by the covering algorithm. Must be "precision", "recall", "accuracy", "fx-measure", "x-estimate" (x must be replaced with a number). |
+| predict-minority-class   | Yes       | true       | "true" if rules should predict the minority class of a label, "false" if they should always predict the presence of a label.                                  |
 
 The program is also available as a jar-file. It can for example be executed from the command line as follows:
 

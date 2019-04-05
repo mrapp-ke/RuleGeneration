@@ -1,5 +1,6 @@
 package de.tud.ke.rulelearning.model;
 
+import de.tud.ke.rulelearning.experiments.BaseConfiguration;
 import de.tud.ke.rulelearning.util.IteratorUtil;
 import de.tud.ke.rulelearning.util.MappedList;
 import mulan.data.MultiLabelInstances;
@@ -17,6 +18,8 @@ import java.util.stream.IntStream;
 public class DataSet implements Iterable<Instance>, Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    private final boolean predictMinorityClass;
 
     private final MultiLabelInstances dataSet;
 
@@ -162,7 +165,8 @@ public class DataSet implements Iterable<Instance>, Serializable {
         return instancesSortedByNumericAttributes.get(index);
     }
 
-    public DataSet(final MultiLabelInstances dataSet) {
+    public DataSet(final BaseConfiguration configuration, final MultiLabelInstances dataSet) {
+        this.predictMinorityClass = configuration.isMinorityClassPredicted();
         this.dataSet = dataSet;
         Collection<Attribute> featureAttributes = dataSet.getFeatureAttributes();
         this.instancesSortedByNumericAttributes = createInstancesSortedByNumericAttributes(
@@ -197,9 +201,13 @@ public class DataSet implements Iterable<Instance>, Serializable {
     }
 
     public boolean getTargetPrediction(final int labelIndex) {
-        int positives = getPositiveExamples(labelIndex);
-        int negatives = dataSet.getNumInstances() - positives;
-        return negatives >= positives;
+        if (predictMinorityClass) {
+            int positives = getPositiveExamples(labelIndex);
+            int negatives = dataSet.getNumInstances() - positives;
+            return negatives >= positives;
+        } else {
+            return true;
+        }
     }
 
     public int getPositiveExamples(final int labelIndex) {

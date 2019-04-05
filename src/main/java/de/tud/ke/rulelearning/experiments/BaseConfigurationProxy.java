@@ -98,6 +98,16 @@ public class BaseConfigurationProxy implements BaseConfiguration {
     }
 
     @Override
+    public final boolean isMinorityClassPredicted() {
+        return baseConfiguration.isMinorityClassPredicted();
+    }
+
+    @Override
+    public final void setMinorityClassPredicted(final boolean predictMinorityClass) {
+        baseConfiguration.setMinorityClassPredicted(predictMinorityClass);
+    }
+
+    @Override
     public String toString() {
         return getBaseConfiguration().toString();
     }

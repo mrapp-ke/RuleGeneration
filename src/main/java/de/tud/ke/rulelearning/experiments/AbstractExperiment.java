@@ -26,6 +26,7 @@ public abstract class AbstractExperiment<ConfigType extends BaseConfiguration> i
         boolean useCrossValidation = ConfigUtil.getBooleanArgument("cross-validation", args, false);
         int crossValidationFolds = ConfigUtil.getIntArgument("folds", args, 10);
         boolean savePredictionCsvFile = ConfigUtil.getBooleanArgument("save-prediction-csv-file", args, false);
+        boolean predictMinorityClass = ConfigUtil.getBooleanArgument("predict-minority-class", args, true);
         return new Configuration.Builder()
                 .setArffFile(arffFilePath)
                 .setXmlLabelsDefFile(xmlLabelsDefFilePath)
@@ -35,6 +36,7 @@ public abstract class AbstractExperiment<ConfigType extends BaseConfiguration> i
                 .setUseCrossValidation(useCrossValidation)
                 .setCrossValidationFolds(crossValidationFolds)
                 .setPredictionCsvFileSaved(savePredictionCsvFile)
+                .setMinorityClassPredicted(predictMinorityClass)
                 .build();
     }
 
