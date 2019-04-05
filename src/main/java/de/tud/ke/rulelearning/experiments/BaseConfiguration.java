@@ -37,4 +37,8 @@ public interface BaseConfiguration extends Serializable {
 
     void setPredictionCsvFileSaved(boolean savePredictionCsvFile);
 
+    boolean isMinorityClassPredicted();
+
+    void setMinorityClassPredicted(boolean predictMinorityClass);
+
 }

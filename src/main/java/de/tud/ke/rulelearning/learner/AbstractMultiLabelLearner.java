@@ -116,7 +116,7 @@ public abstract class AbstractMultiLabelLearner<ConfigType extends BaseConfigura
     }
 
     protected DataSet createTrainingDataSet(final MultiLabelInstances multiLabelInstances) {
-        return new DataSet(multiLabelInstances);
+        return new DataSet(configuration, multiLabelInstances);
     }
 
     @Override
