@@ -323,6 +323,7 @@ public abstract class AbstractSingleExperiment<ConfigType extends BaseConfigurat
 
     @Override
     public final void run() {
+        long startTime = System.currentTimeMillis();
         LOG.info("Running experiment \"{}\"...", getClass().getSimpleName());
         LOG.info("Configuration:\n\n{}\n", getConfiguration());
 
@@ -361,6 +362,9 @@ public abstract class AbstractSingleExperiment<ConfigType extends BaseConfigurat
             throw new RuntimeException(String.format("Malformed data set: %s", e.getMessage()), e);
         } catch (Exception e) {
             throw new RuntimeException(e);
+        } finally {
+            long duration = System.currentTimeMillis() - startTime;
+            LOG.info("Experiment \"{}\" finished after {} ms", getClass().getSimpleName(), duration);
         }
     }
 
