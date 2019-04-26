@@ -8,9 +8,8 @@ import java.util.Objects;
 
 public class RuleGenerationConfiguration extends RuleLearnerConfiguration {
 
-    public static class Builder extends RuleLearnerConfiguration.AbstractBuilder<Builder> {
-
-        private final BaseConfiguration baseConfiguration;
+    public static abstract class AbstractBuilder<T extends AbstractBuilder<T>> extends
+            RuleLearnerConfiguration.AbstractBuilder<T> {
 
         private int minRules = 300000;
 
@@ -18,14 +17,13 @@ public class RuleGenerationConfiguration extends RuleLearnerConfiguration {
 
         private Heuristic coveringHeuristic = new FMeasure();
 
-        public Builder(final BaseConfiguration baseConfiguration) {
+        public AbstractBuilder(final BaseConfiguration baseConfiguration) {
             super(baseConfiguration);
-            this.baseConfiguration = baseConfiguration;
         }
 
-        public Builder setMinRules(final int minRules) {
+        public T setMinRules(final int minRules) {
             this.minRules = minRules;
-            return this;
+            return self();
         }
 
         public int getMinRules() {
@@ -36,26 +34,37 @@ public class RuleGenerationConfiguration extends RuleLearnerConfiguration {
             return covering;
         }
 
-        public Builder setCovering(final Covering.Type covering) {
+        public T setCovering(final Covering.Type covering) {
             this.covering = covering;
-            return this;
+            return self();
         }
 
         public Heuristic getCoveringHeuristic() {
             return coveringHeuristic;
         }
 
-        public Builder setCoveringHeuristic(final Heuristic coveringHeuristic) {
+        public T setCoveringHeuristic(final Heuristic coveringHeuristic) {
             this.coveringHeuristic = coveringHeuristic;
-            return this;
-        }
-
-        public RuleGenerationConfiguration build() {
-            return new RuleGenerationConfiguration(baseConfiguration, isRuleCsvFileSaved(), minRules, covering,
-                    coveringHeuristic);
+            return self();
         }
 
     }
+
+
+    public static class Builder extends AbstractBuilder<Builder> {
+
+        public Builder(final BaseConfiguration baseConfiguration) {
+            super(baseConfiguration);
+        }
+
+        public RuleGenerationConfiguration build() {
+            return new RuleGenerationConfiguration(getBaseConfiguration(), isRuleCsvFileSaved(),
+                    getMinRules(), getCovering(), getCoveringHeuristic());
+        }
+
+    }
+
+    private static final long serialVersionUID = 1L;
 
     private final int minRules;
 
@@ -63,9 +72,9 @@ public class RuleGenerationConfiguration extends RuleLearnerConfiguration {
 
     private final Heuristic coveringHeuristic;
 
-    private RuleGenerationConfiguration(final BaseConfiguration baseConfiguration, final boolean saveRuleCsvFile,
-                                        final int minRules, final Covering.Type covering,
-                                        final Heuristic coveringHeuristic) {
+    protected RuleGenerationConfiguration(final BaseConfiguration baseConfiguration, final boolean saveRuleCsvFile,
+                                          final int minRules, final Covering.Type covering,
+                                          final Heuristic coveringHeuristic) {
         super(baseConfiguration, saveRuleCsvFile);
         this.minRules = minRules;
         this.covering = covering;

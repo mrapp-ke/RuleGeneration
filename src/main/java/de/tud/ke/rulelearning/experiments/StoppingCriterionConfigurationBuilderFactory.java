@@ -2,28 +2,22 @@ package de.tud.ke.rulelearning.experiments;
 
 import de.tud.ke.rulelearning.heuristics.Heuristic;
 import de.tud.ke.rulelearning.heuristics.HeuristicFactory;
-import de.tud.ke.rulelearning.learner.covering.Covering;
 import de.tud.ke.rulelearning.util.ConfigUtil;
 
-public final class StoppingCriterionConfigurationBuilderFactory {
+import java.util.function.Function;
 
-    private StoppingCriterionConfigurationBuilderFactory() {
+public final class StoppingCriterionConfigurationBuilderFactory<BuilderType extends StoppingCriterionConfiguration.AbstractBuilder<BuilderType>>
+        extends RuleGenerationConfigurationBuilderFactory<BuilderType> {
 
+    public StoppingCriterionConfigurationBuilderFactory(final Function<BaseConfiguration, BuilderType> builderFactory) {
+        super(builderFactory);
     }
 
-    public static StoppingCriterionConfiguration.Builder create(final BaseConfiguration baseConfiguration,
-                                                                final String[] args) {
-        boolean saveRuleCsvFile = ConfigUtil.getBooleanArgument("save-rule-csv-file", args, false);
+    public BuilderType create(final BaseConfiguration baseConfiguration, final String[] args) {
         Heuristic stoppingCriterionHeuristic = HeuristicFactory.create(ConfigUtil.getOptionalArgument("stopping-criterion-heuristic", args));
         double threshold = ConfigUtil.getDoubleArgument("stopping-criterion-threshold", args, 1);
-        String coveringType = ConfigUtil.getOptionalArgument("covering", args);
-        Covering.Type covering = coveringType != null ? Covering.Type.fromValue(coveringType) : null;
-        Heuristic coveringHeuristic = HeuristicFactory.create(ConfigUtil.getOptionalArgument("covering-heuristic", args));
-        return new StoppingCriterionConfiguration.Builder(baseConfiguration)
-                .setRuleCsvFileSaved(saveRuleCsvFile)
-                .setCovering(covering)
+        return super.create(baseConfiguration, args)
                 .setStoppingCriterionHeuristic(stoppingCriterionHeuristic)
-                .setCoveringHeuristic(coveringHeuristic)
                 .setStoppingCriterionThreshold(threshold);
     }
 

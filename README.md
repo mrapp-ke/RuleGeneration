@@ -13,6 +13,10 @@ Currently the following main classes are provided:
 
 - `MainCoveringMEstimate`:  Uses different configurations of the m-Estimate for selecting the rules that are part of the final theory
 - `MainCoveringFMeasure`: Uses different configurations of the F-Measure for selecting the rules that are part of the final theory
+- `MainStoppingCriterionMEstimate`: Uses different thresholds to filter the rules that have been selected by an experiment using the main class `MainCoveringMEstimate`.
+- `MainStoppingCriterionFMeasure`: Uses different thresholds to filter the rules that have been selected by an experiment using the main class `MainCoveringFMeasure`.
+- `MainFMeasure`: Creates a single theory by selecting rules according to a the F-Measure (as `MainCoveringFMeasure` does) and filtering them according to a threshold (as `MainStoppingCriterionFMeasure` does). Depending on the data set, the F-Measure's beta parameter and the threshold are automatically set to values that worked best on other data sets.
+- `MainMEstimate`: Creates a single theory by selecting rules according to a the m-Estimate (as `MainCoveringMEstimate` does) and filtering them according to a threshold (as `MainStoppingCriterionMEstimate` does). Depending on the data set, the m-Estimate's beta parameter and the threshold are automatically set to values that worked best on other data sets.
 
 Various command line parameters must be passed to these main classes in order to run the program:
 
@@ -32,7 +36,14 @@ Various command line parameters must be passed to these main classes in order to
 | covering-heuristic       | Yes       | f1-measure | The heuristic to be used by the covering algorithm. Must be "precision", "recall", "accuracy", "fx-measure", "x-estimate" (x must be replaced with a number). |
 | predict-minority-class   | Yes       | true       | "true" if rules should predict the minority class of a label, "false" if they should always predict the presence of a label.                                  |
 
-The program is also available as a jar-file. It can for example be executed from the command line as follows:
+Additionally, the following command line parameters are available when using the main class `MainStoppingCriterionMEstimate`, `MainStoppingCriterionFMeasure`, `MainMEstimate` or `MainFMeasure`:
+
+| Parameter                    | Optional? | Default | Description                                                                                                          |
+|------------------------------|-----------|---------|----------------------------------------------------------------------------------------------------------------------|
+| stopping-criterion-heuristic | Yes       | null    | The heuristic to be used to filter rules. If not specified, the value of the parameter "covering-heuristic" is used. |
+| stopping-criterion-threshold | Yes       | 1       | The threshold to be used to filter rules.                                                                            |
+
+The program is also available as a jar-file. It can for example be executed from the command line by specifying the main class and parameters to be used as follows:
 
 ```
 java -Xmx8G -cp rule-generation.jar de.tud.ke.rulelearning.MainCoveringMEstimate -arff data/yeast.arff -xml data/yeast.xml -output-dir results/yeast/m-estimate/ -model-dir yeast/models/ -cross-validation true -folds 10 -min-rules 300000 -covering label-wise -stopping-criterion coverage

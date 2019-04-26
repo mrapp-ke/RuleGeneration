@@ -60,7 +60,8 @@ public class MainCoveringFMeasure {
         BatchExperiment<BaseConfiguration> batchExperiment = new BatchExperiment<>(
                 (baseConfiguration, args1) -> baseConfiguration, args);
         RuleGenerationConfiguration.Builder configurationBuilder =
-                RuleGenerationConfigurationBuilderFactory.create(batchExperiment.getConfiguration(), args);
+                new RuleGenerationConfigurationBuilderFactory<>(RuleGenerationConfiguration.Builder::new)
+                        .create(batchExperiment.getConfiguration(), args);
 
         final BiFunction<String, RuleGenerationConfiguration, AbstractRuleGenerationLearner> learnerFactory =
                 RandomForestRuleGenerationLearner::new;

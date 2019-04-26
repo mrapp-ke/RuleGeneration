@@ -12,7 +12,8 @@ public class MainStoppingCriterionFMeasure {
         BatchExperiment<BaseConfiguration> batchExperiment = new BatchExperiment<>(
                 (baseConfiguration, args1) -> baseConfiguration, args);
         StoppingCriterionConfiguration.Builder configurationBuilder =
-                StoppingCriterionConfigurationBuilderFactory.create(batchExperiment.getConfiguration(), args);
+                new StoppingCriterionConfigurationBuilderFactory<>(StoppingCriterionConfiguration.Builder::new)
+                        .create(batchExperiment.getConfiguration(), args);
 
         final BiFunction<String, StoppingCriterionConfiguration, StoppingCriterionLearner> learnerFactory =
                 StoppingCriterionLearner::new;

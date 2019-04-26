@@ -19,6 +19,10 @@ public class Configuration implements BaseConfiguration {
             return (T) this;
         }
 
+        protected BaseConfiguration getBaseConfiguration() {
+            return configuration;
+        }
+
         public Path getArffFilePath() {
             return configuration.getArffFilePath();
         }
