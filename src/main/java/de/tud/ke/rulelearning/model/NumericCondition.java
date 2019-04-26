@@ -27,6 +27,10 @@ public class NumericCondition extends Condition {
             return comparator.apply(actualValue, expectedValue);
         }
 
+        public String getSign() {
+            return sign;
+        }
+
     }
 
     private static final long serialVersionUID = 1L;
