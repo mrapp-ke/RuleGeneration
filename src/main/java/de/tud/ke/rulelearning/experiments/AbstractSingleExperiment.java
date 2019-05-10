@@ -1,12 +1,11 @@
 package de.tud.ke.rulelearning.experiments;
 
-import de.tud.ke.mlc.common.out.EvaluationCsvPrinter;
-import de.tud.ke.mlc.common.out.EvaluationCsvPrinter.EvaluationResult;
 import de.tud.ke.rulelearning.learner.AbstractMultiLabelLearner;
 import de.tud.ke.rulelearning.model.MultiplePredictionStats;
 import de.tud.ke.rulelearning.model.PredictionStats;
 import de.tud.ke.rulelearning.model.TrainingInstance;
 import de.tud.ke.rulelearning.out.*;
+import de.tud.ke.rulelearning.out.EvaluationCsvPrinter.EvaluationResult;
 import de.tud.ke.rulelearning.out.MultipleEvaluationCsvPrinter.MultipleEvaluationResult;
 import mulan.classifier.MultiLabelLearner;
 import mulan.data.InvalidDataFormatException;

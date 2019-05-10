@@ -1,6 +1,5 @@
-package de.tud.ke.mlc.common.out;
+package de.tud.ke.rulelearning.out;
 
-import de.tud.ke.rulelearning.out.CsvPrinter;
 import mulan.data.MultiLabelInstances;
 import mulan.evaluation.Evaluation;
 import mulan.evaluation.measure.*;
