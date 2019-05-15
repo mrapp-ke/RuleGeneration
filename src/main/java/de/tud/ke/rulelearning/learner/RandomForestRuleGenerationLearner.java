@@ -83,37 +83,6 @@ public class RandomForestRuleGenerationLearner extends AbstractRuleGenerationLea
 
     private static final int NUM_ITERATIONS = 10;
 
-    public RandomForestRuleGenerationLearner(final String name, final RuleGenerationConfiguration configuration) {
-        this(name, configuration, new MultiplePredictionStats());
-    }
-
-    public RandomForestRuleGenerationLearner(final String name, final RuleGenerationConfiguration configuration,
-                                             final MultiplePredictionStats predictionStats) {
-        super(name, configuration, predictionStats);
-    }
-
-    @Override
-    protected RuleSet buildModel(final DataSet trainingDataSet) throws Exception {
-        MultiLabelInstances multiLabelInstances = trainingDataSet.getDataSet();
-        RuleSet ruleSet = new RuleSet();
-        int minRules = getConfiguration().getMinRules();
-        int seed = 0;
-        int size;
-
-        while ((size = ruleSet.size()) < minRules) {
-            LOG.info("Generating more rules. {} of {} rules generated so far...", size, minRules);
-            seed = generateRules(trainingDataSet, multiLabelInstances, seed, ruleSet);
-
-            if (Math.abs(ruleSet.size() - size) <= 10) {
-                LOG.info("Unable to generate more rules...");
-                break;
-            }
-        }
-
-        LOG.info("{} rules generated", ruleSet.size());
-        return ruleSet;
-    }
-
     private int generateRules(final DataSet trainingDataSet, final MultiLabelInstances multiLabelInstances,
                               final int seed, final RuleSet ruleSet) throws Exception {
         int currentSeed = seed;
@@ -151,6 +120,37 @@ public class RandomForestRuleGenerationLearner extends AbstractRuleGenerationLea
         }
 
         return currentSeed;
+    }
+
+    public RandomForestRuleGenerationLearner(final String name, final RuleGenerationConfiguration configuration) {
+        this(name, configuration, new MultiplePredictionStats());
+    }
+
+    public RandomForestRuleGenerationLearner(final String name, final RuleGenerationConfiguration configuration,
+                                             final MultiplePredictionStats predictionStats) {
+        super(name, configuration, predictionStats);
+    }
+
+    @Override
+    protected RuleSet buildModel(final DataSet trainingDataSet) throws Exception {
+        MultiLabelInstances multiLabelInstances = trainingDataSet.getDataSet();
+        RuleSet ruleSet = new RuleSet();
+        int minRules = getConfiguration().getMinRules();
+        int seed = 0;
+        int size;
+
+        while ((size = ruleSet.size()) < minRules) {
+            LOG.info("Generating more rules. {} of {} rules generated so far...", size, minRules);
+            seed = generateRules(trainingDataSet, multiLabelInstances, seed, ruleSet);
+
+            if (Math.abs(ruleSet.size() - size) <= 10) {
+                LOG.info("Unable to generate more rules...");
+                break;
+            }
+        }
+
+        LOG.info("{} rules generated", ruleSet.size());
+        return ruleSet;
     }
 
     @Override
