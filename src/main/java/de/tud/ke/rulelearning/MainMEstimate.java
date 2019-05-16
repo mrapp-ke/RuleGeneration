@@ -20,24 +20,8 @@ public class MainMEstimate {
 
     private static Heuristic[] getHeuristics(final String dataSetName) {
         switch (dataSetName) {
-            case "birds":
-                return new Heuristic[]{new MEstimate(53.5), new MEstimate(18.62), new MEstimate(9)};
-            case "cal500":
-                return new Heuristic[]{new MEstimate(22), new MEstimate(11.12), new MEstimate(9.5)};
-            case "emotions":
-                return new Heuristic[]{new MEstimate(46), new MEstimate(15.12), new MEstimate(5.5)};
-            case "enron":
-                return new Heuristic[]{new MEstimate(52), new MEstimate(19), new MEstimate(9.5)};
-            case "flags":
-                return new Heuristic[]{new MEstimate(50), new MEstimate(17.12), new MEstimate(7.5)};
-            case "genbase":
-                return new Heuristic[]{new MEstimate(53.5), new MEstimate(18.62), new MEstimate(9)};
-            case "medical":
-                return new Heuristic[]{new MEstimate(53), new MEstimate(18.12), new MEstimate(8.5)};
-            case "scene":
-                return new Heuristic[]{new MEstimate(52), new MEstimate(17.12), new MEstimate(9)};
             case "yeast":
-                return new Heuristic[]{new MEstimate(50), new MEstimate(18.12), new MEstimate(8.5)};
+                return new Heuristic[]{new MEstimate(58.24), new MEstimate(12.2), new MEstimate(19.28)};
             default:
                 throw new RuntimeException("Unknown data set: " + dataSetName);
         }
@@ -45,24 +29,8 @@ public class MainMEstimate {
 
     private static double[] getThresholds(final String dataSetName) {
         switch (dataSetName) {
-            case "birds":
-                return new double[]{0.53, 0.32, 0.51};
-            case "cal500":
-                return new double[]{0.56, 0.34, 0.41};
-            case "emotions":
-                return new double[]{0.55, 0.3, 0.49};
-            case "enron":
-                return new double[]{0.58, 0.34, 0.51};
-            case "flags":
-                return new double[]{0.55, 0.33, 0.52};
-            case "genbase":
-                return new double[]{0.49, 0.23, 0.41};
-            case "medical":
-                return new double[]{0.53, 0.29, 0.47};
-            case "scene":
-                return new double[]{0.54, 0.31, 0.47};
             case "yeast":
-                return new double[]{0.58, 0.33, 0.51};
+                return new double[]{0.217, 0.1127, 0.1586};
             default:
                 throw new RuntimeException("Unknown data set: " + dataSetName);
         }
