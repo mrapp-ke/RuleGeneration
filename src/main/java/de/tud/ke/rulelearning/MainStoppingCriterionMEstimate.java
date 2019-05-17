@@ -24,8 +24,8 @@ public class MainStoppingCriterionMEstimate {
 
         for (Heuristic heuristic : new MainCoveringMEstimate.HeuristicIterable()) {
             for (double threshold : THRESHOLDS) {
-                configurationBuilder.setCoveringHeuristic(heuristic);
-                configurationBuilder.setStoppingCriterionThreshold(threshold);
+                configurationBuilder.setCoveringHeuristic(Provider.singleton(heuristic));
+                configurationBuilder.setStoppingCriterionThreshold(Provider.singleton(threshold));
                 batchExperiment.addExperiment(sharedData -> new StoppingCriterionExperiment(sharedData,
                         configurationBuilder.build(), learnerFactory, ""));
             }

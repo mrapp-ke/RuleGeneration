@@ -25,7 +25,7 @@ public class RuleGenerationConfigurationBuilderFactory<BuilderType extends RuleG
                 .setRuleCsvFileSaved(saveRuleCsvFile)
                 .setMinRules(maxRules)
                 .setCovering(covering)
-                .setCoveringHeuristic(coveringHeuristic);
+                .setCoveringHeuristic(Provider.singleton(coveringHeuristic));
     }
 
 }

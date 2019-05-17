@@ -10,29 +10,29 @@ public class StoppingCriterionConfiguration extends RuleGenerationConfiguration 
     public static abstract class AbstractBuilder<T extends AbstractBuilder<T>> extends
             RuleGenerationConfiguration.AbstractBuilder<T> {
 
-        private Heuristic stoppingCriterionHeuristic = null;
+        private Provider<Heuristic> stoppingCriterionHeuristic = null;
 
-        private double stoppingCriterionThreshold = 1;
+        private Provider<Double> stoppingCriterionThreshold = Provider.singleton(1d);
 
         public AbstractBuilder(final BaseConfiguration baseConfiguration) {
             super(baseConfiguration);
         }
 
-        public Heuristic getStoppingCriterionHeuristic() {
+        public Provider<Heuristic> getStoppingCriterionHeuristic() {
             return stoppingCriterionHeuristic;
         }
 
-        public T setStoppingCriterionHeuristic(final Heuristic stoppingCriterionHeuristic) {
+        public T setStoppingCriterionHeuristic(final Provider<Heuristic> stoppingCriterionHeuristic) {
             this.stoppingCriterionHeuristic = stoppingCriterionHeuristic;
             return self();
         }
 
-        public T setStoppingCriterionThreshold(final double stoppingCriterionThreshold) {
+        public T setStoppingCriterionThreshold(final Provider<Double> stoppingCriterionThreshold) {
             this.stoppingCriterionThreshold = stoppingCriterionThreshold;
             return self();
         }
 
-        public double getStoppingCriterionThreshold() {
+        public Provider<Double> getStoppingCriterionThreshold() {
             return stoppingCriterionThreshold;
         }
 
@@ -55,25 +55,25 @@ public class StoppingCriterionConfiguration extends RuleGenerationConfiguration 
 
     private static final long serialVersionUID = 1L;
 
-    private final Heuristic stoppingCriterionHeuristic;
+    private final Provider<Heuristic> stoppingCriterionHeuristic;
 
-    private final double stoppingCriterionThreshold;
+    private final Provider<Double> stoppingCriterionThreshold;
 
     private StoppingCriterionConfiguration(final BaseConfiguration baseConfiguration, final boolean saveRuleCsvFile,
                                            final int minRules, final Covering.Type covering,
-                                           final Heuristic coveringHeuristic,
-                                           final Heuristic stoppingCriterionHeuristic,
-                                           final double stoppingCriterionThreshold) {
+                                           final Provider<Heuristic> coveringHeuristic,
+                                           final Provider<Heuristic> stoppingCriterionHeuristic,
+                                           final Provider<Double> stoppingCriterionThreshold) {
         super(baseConfiguration, saveRuleCsvFile, minRules, covering, coveringHeuristic);
         this.stoppingCriterionHeuristic = stoppingCriterionHeuristic;
         this.stoppingCriterionThreshold = stoppingCriterionThreshold;
     }
 
-    public Heuristic getStoppingCriterionHeuristic() {
+    public Provider<Heuristic> getStoppingCriterionHeuristic() {
         return stoppingCriterionHeuristic;
     }
 
-    public double getStoppingCriterionThreshold() {
+    public Provider<Double> getStoppingCriterionThreshold() {
         return stoppingCriterionThreshold;
     }
 

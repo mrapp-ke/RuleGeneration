@@ -15,7 +15,7 @@ public class RuleGenerationConfiguration extends RuleLearnerConfiguration {
 
         private Covering.Type covering = null;
 
-        private Heuristic coveringHeuristic = new FMeasure();
+        private Provider<Heuristic> coveringHeuristic = Provider.singleton(new FMeasure());
 
         public AbstractBuilder(final BaseConfiguration baseConfiguration) {
             super(baseConfiguration);
@@ -39,11 +39,11 @@ public class RuleGenerationConfiguration extends RuleLearnerConfiguration {
             return self();
         }
 
-        public Heuristic getCoveringHeuristic() {
+        public Provider<Heuristic> getCoveringHeuristic() {
             return coveringHeuristic;
         }
 
-        public T setCoveringHeuristic(final Heuristic coveringHeuristic) {
+        public T setCoveringHeuristic(final Provider<Heuristic> coveringHeuristic) {
             this.coveringHeuristic = coveringHeuristic;
             return self();
         }
@@ -70,11 +70,11 @@ public class RuleGenerationConfiguration extends RuleLearnerConfiguration {
 
     private final Covering.Type covering;
 
-    private final Heuristic coveringHeuristic;
+    private final Provider<Heuristic> coveringHeuristic;
 
     protected RuleGenerationConfiguration(final BaseConfiguration baseConfiguration, final boolean saveRuleCsvFile,
                                           final int minRules, final Covering.Type covering,
-                                          final Heuristic coveringHeuristic) {
+                                          final Provider<Heuristic> coveringHeuristic) {
         super(baseConfiguration, saveRuleCsvFile);
         this.minRules = minRules;
         this.covering = covering;
@@ -89,7 +89,7 @@ public class RuleGenerationConfiguration extends RuleLearnerConfiguration {
         return covering;
     }
 
-    public Heuristic getCoveringHeuristic() {
+    public Provider<Heuristic> getCoveringHeuristic() {
         return coveringHeuristic;
     }
 

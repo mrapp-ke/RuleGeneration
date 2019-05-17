@@ -66,12 +66,13 @@ public class StoppingCriterionLearner extends AbstractMultiLabelRuleLearner<Stop
 
     @Override
     protected RuleCollection finalizeModel(final DataSet trainingDataSet, final RuleCollection model) {
-        double threshold = getConfiguration().getStoppingCriterionThreshold();
+        int fold = getConfiguration().isCrossValidationUsed() ? getCurrentFold() - 1 : 0;
+        double threshold = getConfiguration().getStoppingCriterionThreshold().get(fold);
 
         if (threshold < 1) {
             List<Rule> rules = new ArrayList<>(model);
-            final Heuristic heuristic = getConfiguration().getStoppingCriterionHeuristic() != null ?
-                    getConfiguration().getStoppingCriterionHeuristic() : getConfiguration().getCoveringHeuristic();
+            final Heuristic heuristic = getConfiguration().getStoppingCriterionHeuristic().get(fold) != null ?
+                    getConfiguration().getStoppingCriterionHeuristic().get(fold) : getConfiguration().getCoveringHeuristic().get(fold);
             final Comparator<Rule> comparator = new RuleComparator(heuristic);
             rules.sort(comparator);
 

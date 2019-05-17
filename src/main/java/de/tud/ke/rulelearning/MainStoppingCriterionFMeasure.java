@@ -20,8 +20,8 @@ public class MainStoppingCriterionFMeasure {
 
         for (Heuristic heuristic : new MainCoveringFMeasure.HeuristicIterable()) {
             for (double threshold : MainStoppingCriterionMEstimate.THRESHOLDS) {
-                configurationBuilder.setCoveringHeuristic(heuristic);
-                configurationBuilder.setStoppingCriterionThreshold(threshold);
+                configurationBuilder.setCoveringHeuristic(Provider.singleton(heuristic));
+                configurationBuilder.setStoppingCriterionThreshold(Provider.singleton(threshold));
                 batchExperiment.addExperiment(sharedData -> new StoppingCriterionExperiment(sharedData,
                         configurationBuilder.build(), learnerFactory, ""));
             }

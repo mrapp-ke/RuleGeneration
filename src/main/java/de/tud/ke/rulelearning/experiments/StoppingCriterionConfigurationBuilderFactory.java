@@ -17,8 +17,8 @@ public final class StoppingCriterionConfigurationBuilderFactory<BuilderType exte
         Heuristic stoppingCriterionHeuristic = HeuristicFactory.create(ConfigUtil.getOptionalArgument("stopping-criterion-heuristic", args));
         double threshold = ConfigUtil.getDoubleArgument("stopping-criterion-threshold", args, 1);
         return super.create(baseConfiguration, args)
-                .setStoppingCriterionHeuristic(stoppingCriterionHeuristic)
-                .setStoppingCriterionThreshold(threshold);
+                .setStoppingCriterionHeuristic(Provider.singleton(stoppingCriterionHeuristic))
+                .setStoppingCriterionThreshold(Provider.singleton(threshold));
     }
 
 }

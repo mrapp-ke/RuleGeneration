@@ -26,12 +26,12 @@ public class MainMEstimateParameterTuning {
 
         for (Heuristic heuristic : new MainCoveringMEstimate.HeuristicIterable()) {
             if (heuristic instanceof MEstimate && ((MEstimate) heuristic).getM() <= 4096) {
-                configurationBuilder.setCoveringHeuristic(heuristic);
+                configurationBuilder.setCoveringHeuristic(Provider.singleton(heuristic));
                 batchExperiment.addExperiment(sharedData -> new RuleGenerationExperiment(sharedData,
                         configurationBuilder.build(), learnerFactory1, ""));
 
                 for (double threshold : MainStoppingCriterionMEstimate.THRESHOLDS) {
-                    configurationBuilder.setStoppingCriterionThreshold(threshold);
+                    configurationBuilder.setStoppingCriterionThreshold(Provider.singleton(threshold));
                     batchExperiment.addExperiment(sharedData -> new StoppingCriterionExperiment(sharedData,
                             configurationBuilder.build(), learnerFactory2, ""));
                 }

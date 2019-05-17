@@ -36,8 +36,10 @@ public abstract class AbstractRuleGenerationLearner extends AbstractMultiLabelRu
 
         if (finalizedModel == null) {
             loadedFromSaveFile = false;
+            int fold = getConfiguration().isCrossValidationUsed() ? getCurrentFold() - 1 : 0;
+            Heuristic heuristic = getConfiguration().getCoveringHeuristic().get(fold);
             finalizedModel = covering.getCoveringRules(model, trainingDataSet, getModelStats().getLabelStats(),
-                    getConfiguration().getCoveringHeuristic());
+                    heuristic);
         }
 
         if (modelDirPath != null && !loadedFromSaveFile) {
@@ -78,7 +80,8 @@ public abstract class AbstractRuleGenerationLearner extends AbstractMultiLabelRu
         Covering.Type covering = getConfiguration().getCovering();
 
         if (covering != null) {
-            Heuristic heuristic = getConfiguration().getCoveringHeuristic();
+            int fold = getConfiguration().isCrossValidationUsed() ? getCurrentFold() - 1 : 0;
+            Heuristic heuristic = getConfiguration().getCoveringHeuristic().get(fold);
             fileName = fileName + "_" + covering.getValue() + "-covering_" + heuristic;
         }
 

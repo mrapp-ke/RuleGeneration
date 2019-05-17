@@ -15,8 +15,9 @@ Currently the following main classes are provided:
 - `MainCoveringFMeasure`: Uses different configurations of the F-Measure for selecting the rules that are part of the final theory
 - `MainStoppingCriterionMEstimate`: Uses different thresholds to filter the rules that have been selected by an experiment using the main class `MainCoveringMEstimate`.
 - `MainStoppingCriterionFMeasure`: Uses different thresholds to filter the rules that have been selected by an experiment using the main class `MainCoveringFMeasure`.
-- `MainFMeasure`: Creates a single theory by selecting rules according to a the F-Measure (as `MainCoveringFMeasure` does) and filtering them according to a threshold (as `MainStoppingCriterionFMeasure` does). Depending on the data set, the F-Measure's beta parameter and the threshold are automatically set to values that worked best on other data sets.
-- `MainMEstimate`: Creates a single theory by selecting rules according to a the m-Estimate (as `MainCoveringMEstimate` does) and filtering them according to a threshold (as `MainStoppingCriterionMEstimate` does). Depending on the data set, the m-Estimate's beta parameter and the threshold are automatically set to values that worked best on other data sets.
+- `MainMEstimate`: Creates a single theory by selecting rules according to a the m-Estimate (as `MainCoveringMEstimate` does) and filtering them according to a threshold (as `MainStoppingCriterionMEstimate` does). Depending on the data set, the m-Estimate's beta parameter and the threshold are automatically set to values that have been identified to work best.
+- `MainMEstimateParameterTuning`: Tests different predefined parameter settings.
+- `MainCVDatasetGenerator`: Converts a given data set into training-test-splits for performing a n-fold cross validation
 
 Various command line parameters must be passed to these main classes in order to run the program:
 

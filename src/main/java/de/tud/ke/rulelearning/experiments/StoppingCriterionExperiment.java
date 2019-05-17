@@ -23,7 +23,7 @@ public class StoppingCriterionExperiment extends AbstractSingleRuleLearnerExperi
         Covering.Type covering = getConfiguration().getCovering();
 
         if (covering != null) {
-            Heuristic heuristic = getConfiguration().getCoveringHeuristic();
+            Heuristic heuristic = getConfiguration().getCoveringHeuristic().get(0);
             name = name + ("_" + covering.getValue() + "-covering_" + heuristic);
         }
 

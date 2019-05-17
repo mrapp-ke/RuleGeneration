@@ -52,7 +52,7 @@ public class MainCoveringMEstimate {
                 RandomForestRuleGenerationLearner::new;
 
         for (Heuristic heuristic : new HeuristicIterable()) {
-            configurationBuilder.setCoveringHeuristic(heuristic);
+            configurationBuilder.setCoveringHeuristic(Provider.singleton(heuristic));
             batchExperiment.addExperiment(sharedData -> new RuleGenerationExperiment(sharedData,
                     configurationBuilder.build(), learnerFactory, ""));
         }
