@@ -3,6 +3,7 @@ package de.tud.ke.rulelearning.learner;
 import de.tud.ke.rulelearning.experiments.StoppingCriterionConfiguration;
 import de.tud.ke.rulelearning.heuristics.ConfusionMatrix;
 import de.tud.ke.rulelearning.heuristics.Heuristic;
+import de.tud.ke.rulelearning.learner.covering.Covering;
 import de.tud.ke.rulelearning.learner.prediction.Predictor;
 import de.tud.ke.rulelearning.learner.prediction.RuleSetPredictor;
 import de.tud.ke.rulelearning.model.*;
@@ -89,6 +90,20 @@ public class StoppingCriterionLearner extends AbstractMultiLabelRuleLearner<Stop
         }
 
         return model;
+    }
+
+    @Override
+    public String getModelName() {
+        String name= getName();
+        Covering.Type covering = getConfiguration().getCovering();
+
+        if (covering != null) {
+            int fold = getConfiguration().isCrossValidationUsed() ? getCurrentFold() - 1 : 0;
+            Heuristic heuristic = getConfiguration().getCoveringHeuristic().get(fold);
+            name = name + ("_" + covering.getValue() + "-covering_" + heuristic);
+        }
+
+        return name;
     }
 
     @Override

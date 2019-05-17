@@ -317,7 +317,7 @@ public class MainMEstimate {
         final double[][] heuristics = getHeuristics(dataSetName);
         final double[][] thresholds = getThresholds(dataSetName);
 
-        for (int i = 0; i < heuristics.length; i++) {
+        for (int i = 0; i < heuristics[0].length; i++) {
             final int index = i;
             configurationBuilder.setCoveringHeuristic(fold -> new MEstimate(heuristics[fold][index]));
             configurationBuilder.setStoppingCriterionThreshold(fold -> thresholds[fold][index]);

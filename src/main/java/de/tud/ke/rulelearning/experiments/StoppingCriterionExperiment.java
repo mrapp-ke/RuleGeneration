@@ -18,16 +18,7 @@ public class StoppingCriterionExperiment extends AbstractSingleRuleLearnerExperi
         String arffFileName = getConfiguration().getArffFilePath().getFileName().toString();
         String dataSetName = arffFileName.toLowerCase().endsWith(".arff") ? arffFileName
                 .substring(0, arffFileName.length() - ".arff".length()) : arffFileName;
-        String name = dataSetName + (TextUtil.INSTANCE.isNotEmpty(approachName) ? "_" + approachName : "");
-
-        Covering.Type covering = getConfiguration().getCovering();
-
-        if (covering != null) {
-            Heuristic heuristic = getConfiguration().getCoveringHeuristic().get(0);
-            name = name + ("_" + covering.getValue() + "-covering_" + heuristic);
-        }
-
-        return name;
+        return dataSetName + (TextUtil.INSTANCE.isNotEmpty(approachName) ? "_" + approachName : "");
     }
 
     public StoppingCriterionExperiment(
@@ -56,7 +47,14 @@ public class StoppingCriterionExperiment extends AbstractSingleRuleLearnerExperi
     @Override
     public String getName() {
         String name = getLearnerName();
-        name = name + "_threshold=" + getConfiguration().getStoppingCriterionThreshold();
+        Covering.Type covering = getConfiguration().getCovering();
+
+        if (covering != null) {
+            Heuristic heuristic = getConfiguration().getCoveringHeuristic().get(0);
+            name = name + ("_" + covering.getValue() + "-covering_" + heuristic);
+        }
+
+        name = name + "_threshold=" + getConfiguration().getStoppingCriterionThreshold().get(0);
         return name;
     }
 
